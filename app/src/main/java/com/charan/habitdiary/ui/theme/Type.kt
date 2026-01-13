@@ -11,7 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.charan.habitdiary.R
 
-// 1. Define your Font Family
+
 object AppFonts {
     @OptIn(ExperimentalTextApi::class)
     val GoogleSans =
@@ -35,7 +35,7 @@ object AppFonts {
                 resId = R.font.google_sans_flex_variable,
                 variationSettings = FontVariation.Settings(
                     FontVariation.weight(FontWeight.Bold.weight),
-                    FontVariation.width(130f),
+                    FontVariation.width(125f),
                 )
             )
         )
@@ -74,7 +74,7 @@ val GoogleSansTypography = Typography(
     headlineSmallEmphasized = defaultTypography.headlineSmallEmphasized.applyGoogleSansWide(),
 
     // Title
-    titleLarge = defaultTypography.titleLarge.applyGoogleSansWide(),
+    titleLarge = defaultTypography.titleLarge.applyGoogleSans(),
     titleMedium = defaultTypography.titleMedium.applyGoogleSans(),
     titleSmall = defaultTypography.titleSmall.applyGoogleSans(),
 

@@ -47,7 +47,7 @@ fun CustomListItem(
         leadingContent = leadingContent,
         shapes = customListItemShapes(indexItem),
         colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-        modifier = modifier.padding(ListItemDefaults.SegmentedGap),
+        modifier = modifier.padding(1.dp),
         contentPadding = PaddingValues(16.dp)
 
         )
