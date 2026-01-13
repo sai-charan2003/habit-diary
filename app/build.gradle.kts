@@ -122,7 +122,7 @@ dependencies {
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
     implementation(libs.androidx.compose.animation)
     implementation(libs.firebase.crashlytics)
-    implementation(libs.androidx.room.testing)
+    testImplementation(libs.androidx.room.testing)
     implementation(libs.androidx.media3.exoplayer)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
