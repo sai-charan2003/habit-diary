@@ -154,7 +154,7 @@ dependencies {
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.graphics.shapes)
-    testImplementation(libs.androidx.room.testing)
+    androidTestImplementation(libs.androidx.room.testing)
     implementation(libs.zoomable.image.coil3)
     implementation(libs.coil.video)
     implementation(libs.androidx.media3.ui.compose)
