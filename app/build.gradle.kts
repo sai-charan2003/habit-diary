@@ -27,8 +27,8 @@ android {
         applicationId = "com.charan.habitdiary"
         minSdk = 26
         targetSdk = 36
-        versionCode = 7
-        versionName = "0.5.2"
+        versionCode = 8
+        versionName = "0.6.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -122,8 +122,8 @@ dependencies {
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
     implementation(libs.androidx.compose.animation)
     implementation(libs.firebase.crashlytics)
-    implementation(libs.androidx.room.testing)
     implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -154,12 +154,14 @@ dependencies {
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.graphics.shapes)
-    testImplementation(libs.androidx.room.testing)
+    androidTestImplementation(libs.androidx.room.testing)
     implementation(libs.zoomable.image.coil3)
     implementation(libs.coil.video)
     implementation(libs.androidx.media3.ui.compose)
     implementation(libs.androidx.media3.ui.compose.material3)
     implementation(libs.compose.cloudy)
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
 
 
 }
