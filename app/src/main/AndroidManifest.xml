@@ -55,7 +55,7 @@
         </provider>
         <receiver android:name=".notification.NotificationReceiver"/>
         <receiver android:name=".notification.BootBroadcastReceiver"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
