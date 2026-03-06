@@ -41,7 +41,7 @@ class HabitScreenViewModel @Inject constructor(
     val effect  = _effect.asSharedFlow()
     init {
         getHabits()
-        getDailyLogs()
+        //getDailyLogs()
         _state.update {
             it.copy(
                 todayDate = DateUtil.getTodayDayAndDate()
@@ -136,16 +136,16 @@ class HabitScreenViewModel @Inject constructor(
 
 
 
-    private fun getDailyLogs() = viewModelScope.launch(Dispatchers.IO) {
-        combine(
-            habitLocalRepository.getDailyLogsInRange(),
-            _state.map { it.is24HourFormat }.distinctUntilChanged()
-        ) { logs, is24Hours ->
-            logs.toDailyLogUIStateList(is24Hours)
-        }.collectLatest { dailyLogs ->
-            _state.update { it.copy(dailyLogs = dailyLogs) }
-        }
-    }
+//    private fun getDailyLogs() = viewModelScope.launch(Dispatchers.IO) {
+//        combine(
+//            habitLocalRepository.getDailyLogsInRange(),
+//            _state.map { it.is24HourFormat }.distinctUntilChanged()
+//        ) { logs, is24Hours ->
+//            logs.toDailyLogUIStateList(is24Hours)
+//        }.collectLatest { dailyLogs ->
+//            _state.update { it.copy(dailyLogs = dailyLogs) }
+//        }
+//    }
 
 
     private fun sendEffect(effect : HabitScreenEffect) = viewModelScope.launch {

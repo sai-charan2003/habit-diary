@@ -1,5 +1,6 @@
 package com.charan.habitdiary.presentation.diary
 
+import com.charan.habitdiary.data.model.enums.DailyLogSortType
 import com.charan.habitdiary.presentation.common.model.DailyLogItemUIState
 import com.charan.habitdiary.utils.DateUtil
 import com.kizitonwose.calendar.core.minusMonths
@@ -22,7 +23,8 @@ data class DiaryScreenState(
     val dailyLogItem : List<DailyLogItemUIState> = emptyList(),
     val datesWithLogs: Set<LocalDate> = emptySet(),
     val visibleStartOfDate : LocalDate = startOfDate,
-    val visibleEndOfDate : LocalDate = endOfDate
+    val visibleEndOfDate : LocalDate = endOfDate,
+    val sortType : DailyLogSortType = DailyLogSortType.NEWEST_FIRST,
 )
 
 

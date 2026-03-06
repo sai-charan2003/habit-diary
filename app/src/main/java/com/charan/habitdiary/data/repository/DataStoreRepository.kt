@@ -1,5 +1,6 @@
 package com.charan.habitdiary.data.repository
 
+import com.charan.habitdiary.data.model.enums.DailyLogSortType
 import com.charan.habitdiary.data.model.enums.HabitSortType
 import com.charan.habitdiary.data.model.enums.ThemeOption
 import kotlinx.coroutines.flow.Flow
@@ -29,4 +30,8 @@ interface DataStoreRepository {
     val habitSortType : Flow<HabitSortType>
 
     suspend fun setHabitSortType(sortType : HabitSortType)
+
+    val dailyLogSortType : Flow<DailyLogSortType>
+
+    suspend fun setDailyLogSortType(sortType : DailyLogSortType)
 }
