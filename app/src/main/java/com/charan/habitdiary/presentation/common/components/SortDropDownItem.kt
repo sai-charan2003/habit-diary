@@ -32,36 +32,35 @@ fun<T> CustomDropDown(
     onDismiss : () -> Unit = { },
     containerColor : Color = MaterialTheme.colorScheme.surfaceContainerHigh
 ) {
-        DropdownMenuPopup(
-            expanded = isExpanded,
-            onDismissRequest = {
-                onDismiss()
-            },
+    DropdownMenuPopup(
+        expanded = isExpanded,
+        onDismissRequest = {
+            onDismiss()
+        },
 
         ) {
-                DropdownMenuGroup(
-                    shapes = MenuDefaults.groupShape(0, 1),
-                    containerColor = containerColor
+        DropdownMenuGroup(
+            shapes = MenuDefaults.groupShape(0, 1),
+            containerColor = containerColor
 
-                    ) {
-                    items.fastForEachIndexed { index, item ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(text = stringResource(item as Int))
-                            },
-                            shapes = MenuDefaults.itemShape(index, items.size),
-                            onCheckedChange = {
-                                onItemSelected(item)
-                            },
-                            checked = item == selectedItem,
-                            colors = MenuDefaults.selectableItemColors().copy(
-                                containerColor = containerColor
-                            )
-                        )
-                    }
-                }
-
+        ) {
+            items.fastForEachIndexed { index, item ->
+                DropdownMenuItem(
+                    text = {
+                        Text(text = stringResource(item as Int))
+                    },
+                    shapes = MenuDefaults.itemShape(index, items.size),
+                    onCheckedChange = {
+                        onItemSelected(item)
+                    },
+                    checked = item == selectedItem,
+                    colors = MenuDefaults.selectableItemColors().copy(
+                        containerColor = containerColor
+                    )
+                )
+            }
         }
 
+    }
 
 }

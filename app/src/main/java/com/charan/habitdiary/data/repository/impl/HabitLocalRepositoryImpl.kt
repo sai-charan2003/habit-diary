@@ -8,6 +8,7 @@ import com.charan.habitdiary.data.local.entity.DailyLogMediaEntity
 import com.charan.habitdiary.data.local.entity.HabitEntity
 import com.charan.habitdiary.data.local.model.DailyLogWithHabit
 import com.charan.habitdiary.data.local.model.HabitWithDone
+import com.charan.habitdiary.data.model.enums.DailyLogSortType
 import com.charan.habitdiary.data.repository.HabitLocalRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -55,17 +56,26 @@ class HabitLocalRepositoryImpl(
 
     override fun getDailyLogsInRange(
         startOfDay: LocalDateTime,
-        endOfDay: LocalDateTime
+        endOfDay: LocalDateTime,
+        sortBy : DailyLogSortType
     ): Flow<List<DailyLogWithHabit>> {
-        return dailyLogDao
-            .getDailyLogsInRange(startOfDay, endOfDay)
-            .map { logs ->
-                logs.map { log ->
-                    log.copy(
-                        mediaEntities = log.mediaEntities.filter { !it.isDeleted }
-                    )
-                }
+        return when(sortBy){
+            DailyLogSortType.NEWEST_FIRST -> {
+                dailyLogDao
+                    .getDailyLogsInRangeNewestFirst(startOfDay, endOfDay)
+
             }
+            DailyLogSortType.OLDEST_FIRST -> {
+                dailyLogDao
+                    .getDailyLogsInRangeOldestFirst(startOfDay, endOfDay)
+            }
+        }.map { logs ->
+            logs.map { log ->
+                log.copy(
+                    mediaEntities = log.mediaEntities.filter { !it.isDeleted }
+                )
+            }
+        }
     }
 
 

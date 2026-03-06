@@ -5,6 +5,7 @@ import com.charan.habitdiary.data.local.entity.DailyLogMediaEntity
 import com.charan.habitdiary.data.local.entity.HabitEntity
 import com.charan.habitdiary.data.local.model.DailyLogWithHabit
 import com.charan.habitdiary.data.local.model.HabitWithDone
+import com.charan.habitdiary.data.model.enums.DailyLogSortType
 import com.charan.habitdiary.utils.DateUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.DayOfWeek
@@ -30,7 +31,8 @@ interface HabitLocalRepository {
 
     fun getDailyLogsInRange(
         startOfDay: LocalDateTime = DateUtil.todayStartOfDay(),
-        endOfDay: LocalDateTime = DateUtil.todayEndOfDay()
+        endOfDay: LocalDateTime = DateUtil.todayEndOfDay(),
+        sortBy: DailyLogSortType = DailyLogSortType.NEWEST_FIRST
     ): Flow<List<DailyLogWithHabit>>
 
     fun getActiveHabits(): Flow<List<HabitWithDone>>
