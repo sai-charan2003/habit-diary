@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.charan.habitdiary.data.model.enums.DailyLogSortType
 import com.charan.habitdiary.data.model.enums.HabitSortType
 import com.charan.habitdiary.data.model.enums.ThemeOption
 import com.charan.habitdiary.data.repository.DataStoreRepository
@@ -27,6 +28,8 @@ class DateStoreRepositoryImpl(
         private val KEY_SYSTEM_FONT = booleanPreferencesKey("system_font")
 
         private val KEY_HABIT_SORT_TYPE = stringPreferencesKey("habit_sort_type")
+
+        private val KEY_DAILY_LOG_SORT_TYPE = stringPreferencesKey("daily_log_sort_type")
     }
 
 
@@ -102,6 +105,19 @@ class DateStoreRepositoryImpl(
     override suspend fun setHabitSortType(sortType: HabitSortType) {
         context.dataStore.edit { preferences ->
             preferences[KEY_HABIT_SORT_TYPE] = sortType.name
+        }
+    }
+
+    override val dailyLogSortType: Flow<DailyLogSortType>
+        get() = context.dataStore.data.map {  pref->
+            val sortTypeString = pref[KEY_DAILY_LOG_SORT_TYPE] ?: DailyLogSortType.NEWEST_FIRST.name
+            DailyLogSortType.valueOf(sortTypeString)
+
+        }
+
+    override suspend fun setDailyLogSortType(sortType: DailyLogSortType) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_DAILY_LOG_SORT_TYPE] = sortType.name
         }
     }
 }

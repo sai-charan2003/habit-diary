@@ -6,7 +6,10 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -36,9 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.charan.habitdiary.R
+import com.charan.habitdiary.data.model.enums.DailyLogSortType
 import com.charan.habitdiary.presentation.common.components.CustomMediumTopBar
 import com.charan.habitdiary.presentation.diary.components.CustomWeekCalendar
 import com.charan.habitdiary.presentation.common.components.MonthCalendarView
+import com.charan.habitdiary.presentation.diary.components.LogSortButton
 import com.charan.habitdiary.utils.DateUtil.toLocale
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
@@ -217,6 +222,24 @@ fun DiaryScreen(
                     .padding(horizontal = 16.dp)
                     .nestedScroll(scrollBehavior.nestedScrollConnection)
             ) {
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        LogSortButton(
+                            sortTypeRes = state.sortType.toLocaleString(),
+                            icon = when(state.sortType){
+                                DailyLogSortType.NEWEST_FIRST -> R.drawable.new_first_sort
+                                DailyLogSortType.OLDEST_FIRST -> R.drawable.old_first_sort
+                            },
+                            onToggleSort = {
+                                viewModel.onEvent(DiaryScreenEvents.OnSortTypeChange)
+                            }
+
+                        )
+                    }
+                }
                 items(state.dailyLogItem.size) { index ->
                     val log = state.dailyLogItem[index]
                     DayLogEntryItem(

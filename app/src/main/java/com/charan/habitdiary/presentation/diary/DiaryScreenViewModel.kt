@@ -2,6 +2,7 @@ package com.charan.habitdiary.presentation.diary
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.charan.habitdiary.data.model.enums.DailyLogSortType
 import com.charan.habitdiary.data.repository.DataStoreRepository
 import com.charan.habitdiary.data.repository.HabitLocalRepository
 import com.charan.habitdiary.presentation.diary.DiaryScreenEffect.*
@@ -39,6 +40,7 @@ class DiaryScreenViewModel @Inject constructor(
     init {
         fetchDailyLogsForDate()
         getLoggedDatesInRange()
+        observerSortType()
     }
 
 
@@ -66,7 +68,21 @@ class DiaryScreenViewModel @Inject constructor(
 
 
             }
+            DiaryScreenEvents.OnSortTypeChange -> {
+                handleSortTypeChange()
+            }
+
         }
+    }
+
+    private fun handleSortTypeChange() = viewModelScope.launch{
+        val changeSortType = if(_state.value.sortType == DailyLogSortType.NEWEST_FIRST) {
+            DailyLogSortType.OLDEST_FIRST
+        } else {
+            DailyLogSortType.NEWEST_FIRST
+        }
+        dataStoreRepo.setDailyLogSortType(changeSortType)
+
     }
 
     private fun handleDateRangeChange(startDate: LocalDate, endDate: LocalDate) {
@@ -111,25 +127,21 @@ class DiaryScreenViewModel @Inject constructor(
 
     @OptIn(ExperimentalTime::class, ExperimentalCoroutinesApi::class)
     private fun fetchDailyLogsForDate() = viewModelScope.launch(Dispatchers.IO) {
-
-        _state
-            .map { it.selectedDate }
-            .distinctUntilChanged()
-            .flatMapLatest { date ->
-                _state.update { it.copy(dailyLogItem = emptyList()) }
-                val start = date.getStartOfDay()
-                val end = date.getEndOfDay()
-                val logsFlow = habitLocalRepository.getDailyLogsInRange(start, end)
-                combine(
-                    logsFlow,
-                    dataStoreRepo.getIs24HourFormat
-                ) { logs, is24Hours ->
-                    logs.toDailyLogUIStateList(is24Hours)
-                }
+        combine(
+            _state.map { it.selectedDate }.distinctUntilChanged(),
+            _state.map { it.sortType }.distinctUntilChanged(),
+            dataStoreRepo.getIs24HourFormat.distinctUntilChanged()
+        ) { date, sortType, is24Hours ->
+            val start = date.getStartOfDay()
+            val end = date.getEndOfDay()
+            val logsFlow = habitLocalRepository.getDailyLogsInRange(start, end, sortType)
+            logsFlow.map { logs ->
+                logs.toDailyLogUIStateList(is24Hours)
             }
-            .collectLatest { uiList ->
-                _state.update { it.copy(dailyLogItem = uiList) }
-            }
+        }.flatMapLatest { it }
+         .collectLatest { uiList ->
+             _state.update { it.copy(dailyLogItem = uiList) }
+         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -144,6 +156,16 @@ class DiaryScreenViewModel @Inject constructor(
                 .collectLatest { dates ->
                     _state.update { it.copy(datesWithLogs = dates.toSet()) }
                 }
+        }
+    }
+
+    private fun observerSortType() = viewModelScope.launch {
+        dataStoreRepo.dailyLogSortType.collectLatest { sortType ->
+            _state.update {
+                it.copy(
+                    sortType = sortType
+                )
+            }
         }
     }
 

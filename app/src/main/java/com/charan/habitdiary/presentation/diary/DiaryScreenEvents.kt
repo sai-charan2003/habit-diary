@@ -14,4 +14,6 @@ sealed class DiaryScreenEvents {
 
     data class OnVisibleDateRangeChange(val startDate: LocalDate, val endDate: LocalDate) : DiaryScreenEvents()
 
+    data object OnSortTypeChange : DiaryScreenEvents()
+
 }

@@ -92,6 +92,8 @@
     <string name="add_daily_log">Add Daily Log</string>
     <string name="save_log">Save Log</string>
     <string name="edit_daily_log">Edit Daily Log</string>
+    <string name="newest_first">Newest</string>
+    <string name="oldest_first">Oldest</string>
 
     <string name="add_entry">Add Entry</string>
     <string name="back_button">Back Button</string>
