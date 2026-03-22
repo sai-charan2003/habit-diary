@@ -266,6 +266,7 @@ fun AddDailyLogScreen(
         bottomBar = {
             val hasMedia = state.dailyLogItemDetails.mediaItems.any { !it.isDeleted }
             val hasNotes = state.dailyLogItemDetails.notesText.isNotBlank()
+            val hasHabit = state.dailyLogItemDetails.habitId != null
             val canEditContent = (hasMedia || hasNotes) && !state.isLoading
                     DiaryEditorToolbar(
                         onSaveLog = {
@@ -288,7 +289,7 @@ fun AddDailyLogScreen(
                         isBoldTextSelected = richTextState.currentSpanStyle.fontWeight == FontWeight.Bold,
                         isItalicTextSelected = richTextState.currentSpanStyle.fontStyle == FontStyle.Italic,
                         isUnderlineTextSelected = richTextState.currentSpanStyle.textDecoration == TextDecoration.Underline,
-                        isSaveEnabled = canEditContent,
+                        isSaveEnabled = canEditContent || hasHabit,
                         showDeleteButton = state.isEdit,
                         onAttachMedia = {
                             viewModel.onEvent(DailyLogEvent.OnToggleImagePickOptionsSheet(true))
