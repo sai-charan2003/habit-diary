@@ -298,12 +298,11 @@ fun AddDailyLogScreen(
         },
         modifier = Modifier.imePadding()
     ) { innerPadding->
-        val imeInsets = WindowInsets.ime.asPaddingValues()
         LazyColumn(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
-            contentPadding = innerPadding + imeInsets,
+            contentPadding = innerPadding,
         ) {
             if(state.dailyLogItemDetails.habitId!=null){
                 item {
