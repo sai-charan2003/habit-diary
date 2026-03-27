@@ -73,7 +73,7 @@
     <string name="habit_deleted_message">This habit has been deleted.</string>
     <string name="unlock_app">Unlock</string>
     <string name="storage_permission_required">Storage Permission Required</string>
-    <string name="storage_permission_description">To save media to your device, please grant storage permission..</string>
+    <string name="storage_permission_description">To save media to your device, please grant storage permission.</string>
 
 
     <!-- Onboarding Screen Strings -->
