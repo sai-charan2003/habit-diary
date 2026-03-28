@@ -111,8 +111,13 @@ class ListDetailSceneStrategy<T : Any>(val windowSizeClass: WindowSizeClass) : S
             return null
         }
 
-        val detailEntry =
-            entries.lastOrNull()?.takeIf { it.metadata.containsKey(DETAIL_KEY) }
+        val lastEntry = entries.lastOrNull() ?: return null
+        if (!lastEntry.metadata.containsKey(DETAIL_KEY) &&
+            !lastEntry.metadata.containsKey(LIST_KEY)
+        ) {
+            return null
+        }
+        val detailEntry = lastEntry.takeIf { it.metadata.containsKey(DETAIL_KEY) }
         val listEntry = entries.findLast { it.metadata.containsKey(LIST_KEY) } ?: return null
 
 
