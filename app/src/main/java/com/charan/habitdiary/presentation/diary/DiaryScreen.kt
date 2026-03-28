@@ -1,6 +1,6 @@
 package com.charan.habitdiary.presentation.diary
 
-import DayLogEntryItem
+import com.charan.habitdiary.presentation.common.components.DayLogEntryItem
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
