@@ -3,6 +3,7 @@ package com.charan.habitdiary.presentation.navigation
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
@@ -53,23 +54,27 @@ class ListDetailScene<T : Any>(
             Row(modifier = Modifier.fillMaxSize()) {
 
                 Column(
-                    modifier = Modifier.then(
-                        if (detailEntry == null) {
-                            Modifier
-                        } else {
-                            Modifier.weight(0.4f)
-                        }
-                    )
+                    modifier = if (detailEntry != null) {
+                        Modifier.weight(0.4f).animateContentSize()
+                    } else {
+                        Modifier
+                    }
                 ) {
                     listEntry.Content()
                 }
 
-                Column(modifier = Modifier.weight(0.6f)) {
-                    AnimatedContent(
-                        targetState = detailEntry,
-                        contentKey = { entry -> entry?.contentKey },
-                    ) { entry ->
-                        entry?.Content()
+                if (detailEntry != null) {
+                    Column(
+                        modifier = Modifier
+                            .weight(0.6f)
+                            .animateContentSize()
+                    ) {
+                        AnimatedContent(
+                            targetState = detailEntry,
+                            contentKey = { entry -> entry?.contentKey },
+                        ) { entry ->
+                            entry?.Content()
+                        }
                     }
                 }
 
