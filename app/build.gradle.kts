@@ -28,8 +28,8 @@ android {
         applicationId = "com.charan.habitdiary"
         minSdk = 26
         targetSdk = 36
-        versionCode = 13
-        versionName = "0.9.0"
+        versionCode = 14
+        versionName = "0.10.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -176,6 +176,10 @@ dependencies {
     implementation(libs.compose.cloudy)
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
+    implementation(libs.androidx.compose.adaptive)
+    implementation(libs.androidx.compose.adaptive.layout)
+    implementation(libs.androidx.compose.adaptive.navigation)
+    implementation(libs.androidx.compose.adaptive.navigation3)
     implementation(libs.richeditor.compose)
 
 
