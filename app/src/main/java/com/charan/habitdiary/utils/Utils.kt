@@ -188,7 +188,8 @@ fun getAppVersion() = BuildConfig.VERSION_NAME
 fun BiometricManager.isBiometricAvailable(): Boolean {
     return canAuthenticate(
         BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                BiometricManager.Authenticators.BIOMETRIC_WEAK
+                BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                BiometricManager.Authenticators.DEVICE_CREDENTIAL
     ) == BiometricManager.BIOMETRIC_SUCCESS
 }
 
