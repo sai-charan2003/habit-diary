@@ -14,6 +14,7 @@ import com.charan.habitdiary.presentation.settings.SettingsScreenEffect.*
 import com.charan.habitdiary.utils.GITHUB_URL
 import com.charan.habitdiary.utils.PLAY_STORE_URL
 import com.charan.habitdiary.utils.ProcessState
+import com.charan.habitdiary.utils.getAppVersionWithVersionCode
 import com.charan.habitdiary.utils.isBiometricAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -101,6 +102,18 @@ class SettingsViewModel @Inject constructor(
             SettingsScreenEvent.OnRateAppClick -> {
                 sendEvent(OpenUrl(PLAY_STORE_URL))
             }
+
+            SettingsScreenEvent.OnToggleChangeLogClick -> {
+                handleChangeLogClick()
+            }
+        }
+    }
+
+    private fun handleChangeLogClick() = viewModelScope.launch {
+        _state.update {
+            it.copy(
+                showChangeLog = !it.showChangeLog
+            )
         }
     }
 
@@ -210,7 +223,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun getAppVersion() {
-        val appVersion = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
+        val appVersion = getAppVersionWithVersionCode()
         _state.update {
             it.copy(
                 appVersion = appVersion
