@@ -1,4 +1,5 @@
 ## Features
-- Add support for Android 14 (API level 34) and target SDK version 34.
-- Implement new permissions and features introduced in Android 14, such as improved privacy controls and enhanced
-- notification management.
+
+* Added changelog feature to display app updates within the app.
+* Swipe gesture support to switch between week and month views.
+* Added “Rate on Google Play” option in Settings.
