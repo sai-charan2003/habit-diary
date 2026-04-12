@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccessTime
 import androidx.compose.material.icons.rounded.BugReport
+import androidx.compose.material.icons.rounded.Campaign
 import androidx.compose.material.icons.rounded.Code
 import androidx.compose.material.icons.rounded.ColorLens
 import androidx.compose.material.icons.rounded.Contrast
@@ -25,6 +26,7 @@ import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,12 +37,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.charan.habitdiary.R
 import com.charan.habitdiary.data.repository.impl.BackupRepositoryImpl.Companion.FILE_TYPE
+import com.charan.habitdiary.presentation.common.components.ChangeLogBottomSheet
 import com.charan.habitdiary.presentation.common.components.CustomListItem
 import com.charan.habitdiary.presentation.common.components.CustomMediumTopBar
 import com.charan.habitdiary.presentation.common.model.ToastMessage
@@ -113,6 +117,14 @@ fun SettingsScreen(
                 }
             }
         }
+    }
+
+    if(state.showChangeLog){
+        ChangeLogBottomSheet(
+            onDismiss = {
+                viewModel.onEvent(SettingsScreenEvent.OnToggleChangeLogClick)
+            }
+        )
     }
     Scaffold(
         topBar = {
@@ -261,7 +273,7 @@ fun SettingsScreen(
                     stringResource(R.string.support)
                 )
                 CustomListItem(
-                    indexItem = IndexItem.FIRST_AND_LAST,
+                    indexItem = IndexItem.FIRST,
                     headLineContent = {
                         Text(stringResource(R.string.send_feedback))
                     },
@@ -275,6 +287,23 @@ fun SettingsScreen(
                         Icon(
                             imageVector = Icons.Rounded.Email,
                             contentDescription = stringResource(R.string.send_feedback)
+                        )
+                    }
+                )
+
+                CustomListItem(
+                    indexItem = IndexItem.LAST,
+                    headLineContent = {
+                        Text(stringResource(R.string.rate_app))
+                    },
+                    onClick = {
+                        viewModel.onEvent(SettingsScreenEvent.OnRateAppClick)
+                    },
+                    leadingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.google_play),
+                            contentDescription = stringResource(R.string.rate_app),
+                            modifier = Modifier.size(IconButtonDefaults.mediumIconSize)
                         )
                     }
                 )
@@ -314,6 +343,24 @@ fun SettingsScreen(
                         Icon(
                             imageVector = Icons.Rounded.Folder,
                             contentDescription = stringResource(R.string.source_code)
+                        )
+                    }
+                )
+
+                CustomListItem(
+                    indexItem = IndexItem.MIDDLE,
+                    headLineContent = {
+                        Text(stringResource(R.string.whats_new))
+                    },
+                    onClick = {
+                        viewModel.onEvent(
+                            SettingsScreenEvent.OnToggleChangeLogClick
+                        )
+                    },
+                    leadingContent = {
+                        Icon(
+                            imageVector = Icons.Rounded.Campaign,
+                            contentDescription = stringResource(R.string.whats_new)
                         )
                     }
                 )

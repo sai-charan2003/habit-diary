@@ -29,7 +29,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = 15
-        versionName = "0.10.1"
+        versionName = "0.11.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -166,7 +166,7 @@ dependencies {
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.graphics.shapes)
-    implementation(libs.androidx.biometric)
+    implementation(libs.androidx.biometric.compose)
     androidTestImplementation(libs.androidx.room.testing)
     implementation(libs.zoomable.image.coil3)
     implementation(libs.coil.video)

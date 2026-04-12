@@ -12,7 +12,10 @@ import com.charan.habitdiary.data.repository.DataStoreRepository
 import com.charan.habitdiary.presentation.common.model.ToastMessage
 import com.charan.habitdiary.presentation.settings.SettingsScreenEffect.*
 import com.charan.habitdiary.utils.GITHUB_URL
+import com.charan.habitdiary.utils.PLAY_STORE_URL
 import com.charan.habitdiary.utils.ProcessState
+import com.charan.habitdiary.utils.getAppVersionWithVersionCode
+import com.charan.habitdiary.utils.isBiometricAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -95,6 +98,22 @@ class SettingsViewModel @Inject constructor(
             SettingsScreenEvent.OnSendFeedbackClick -> {
                 sendEvent(LaunchSendFeedbackEmail)
             }
+
+            SettingsScreenEvent.OnRateAppClick -> {
+                sendEvent(OpenUrl(PLAY_STORE_URL))
+            }
+
+            SettingsScreenEvent.OnToggleChangeLogClick -> {
+                handleChangeLogClick()
+            }
+        }
+    }
+
+    private fun handleChangeLogClick() = viewModelScope.launch {
+        _state.update {
+            it.copy(
+                showChangeLog = !it.showChangeLog
+            )
         }
     }
 
@@ -170,11 +189,8 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun checkIfBiometricIsAvailable() =viewModelScope.launch{
-        when(biometricManager.canAuthenticate(
-            BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                    BiometricManager.Authenticators.BIOMETRIC_WEAK
-        )){
-            BiometricManager.BIOMETRIC_SUCCESS -> {
+        when (biometricManager.isBiometricAvailable()) {
+            true -> {
                 _state.update {
                     it.copy(
                         isBiometricLockEnabled = true
@@ -207,7 +223,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun getAppVersion() {
-        val appVersion = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
+        val appVersion = getAppVersionWithVersionCode()
         _state.update {
             it.copy(
                 appVersion = appVersion
