@@ -7,14 +7,12 @@ import com.charan.habitdiary.R
 import com.charan.habitdiary.data.repository.FileRepository
 import com.charan.habitdiary.presentation.common.model.ToastMessage
 import com.charan.habitdiary.utils.PermissionManager
-import com.charan.habitdiary.utils.ProcessState
 import com.charan.habitdiary.utils.isSDK29OrAbove
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -82,45 +80,19 @@ class MediaViewerViewModel @Inject constructor(
         }
     }
 
-    private fun saveMedia(filePath: String) = viewModelScope.launch{
-        fileRepository.saveMediaToDownloads(filePath).collectLatest { state ->
-            when (state) {
-                is ProcessState.Error -> {
-                    _state.update {
-                        it.copy(
-                            isDownloading = false,
-                        )
-                    }
-                    sendEffect(MediaViewerEffect.ShowToast(ToastMessage.Text(state.exception)))
-
-
-                }
-
-                is ProcessState.Loading -> {
-                    _state.update {
-                        it.copy(
-                            isDownloading = true
-                        )
-                    }
-                }
-
-                ProcessState.NotDetermined -> {
-
-                }
-
-                is ProcessState.Success<*> -> {
-                    _state.update {
-                        it.copy(
-                            isDownloading = false
-                        )
-                    }
-                    sendEffect(MediaViewerEffect.ShowToast(ToastMessage.Res(R.string.saved_to_download)))
-
-                }
-            }
+    private fun saveMedia(filePath: String) = viewModelScope.launch {
+        _state.update {
+            it.copy(isDownloading = true)
         }
-
-
+        val result = fileRepository.saveMediaToDownloads(filePath)
+        _state.update {
+            it.copy(isDownloading = false)
+        }
+        result.onSuccess {
+            sendEffect(MediaViewerEffect.ShowToast(ToastMessage.Res(R.string.saved_to_download)))
+        }.onFailure { e ->
+            sendEffect(MediaViewerEffect.ShowToast(ToastMessage.Text(e.message ?: "Failed to save media")))
+        }
     }
 
     private fun sendEffect(effect : MediaViewerEffect) = viewModelScope.launch {

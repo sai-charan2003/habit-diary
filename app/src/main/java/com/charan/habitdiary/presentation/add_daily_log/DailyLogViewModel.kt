@@ -17,7 +17,6 @@ import com.charan.habitdiary.utils.DateUtil
 import com.charan.habitdiary.utils.DateUtil.toFormattedString
 import com.charan.habitdiary.utils.DateUtil.toLocalDate
 import com.charan.habitdiary.utils.PermissionManager
-import com.charan.habitdiary.utils.ProcessState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -390,15 +389,14 @@ class DailyLogViewModel @AssistedInject constructor(
             uris
                 .map { uri ->
                     async {
-                        fileRepository.saveImagesToCache(uri).collect { state ->
-                            if (state is ProcessState.Success<String>) {
-                                updateImagePath(state.data)
-                                return@collect
-                            }
-                        }
+                        fileRepository.saveImagesToCache(uri).getOrNull()
                     }
                 }
                 .awaitAll()
+                .filterNotNull()
+                .forEach { path ->
+                    updateImagePath(path)
+                }
         } finally {
             setLoading(false)
         }
@@ -407,23 +405,21 @@ class DailyLogViewModel @AssistedInject constructor(
     private suspend fun saveImagesToFileDir() {
         val unSavedImages = _state.value.dailyLogItemDetails.mediaItems.filter { it.isPendingSave && !it.isDeleted }
         unSavedImages.forEach { item->
-            fileRepository.saveMedia(item.mediaPath.toUri()).collect { state->
-                if (state is ProcessState.Success<String>) {
-                    _state.update { current->
-                        val updatedMediaItems = current.dailyLogItemDetails.mediaItems.map { mediaItem->
-                            if(mediaItem == item){
-                                mediaItem.copy(
-                                    mediaPath = state.data,
-                                    isPendingSave = false
-                                )
-                            } else mediaItem
-                        }
-                        current.copy(
-                            dailyLogItemDetails = current.dailyLogItemDetails.copy(
-                                mediaItems = updatedMediaItems
+            fileRepository.saveMedia(item.mediaPath.toUri()).onSuccess { newPath ->
+                _state.update { current->
+                    val updatedMediaItems = current.dailyLogItemDetails.mediaItems.map { mediaItem->
+                        if(mediaItem == item){
+                            mediaItem.copy(
+                                mediaPath = newPath,
+                                isPendingSave = false
                             )
-                        )
+                        } else mediaItem
                     }
+                    current.copy(
+                        dailyLogItemDetails = current.dailyLogItemDetails.copy(
+                            mediaItems = updatedMediaItems
+                        )
+                    )
                 }
             }
         }
