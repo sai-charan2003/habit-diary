@@ -1,11 +1,11 @@
 package com.charan.habitdiary.presentation.habits
 import com.charan.habitdiary.data.model.enums.HabitSortType
-import com.charan.habitdiary.presentation.common.model.DailyLogItemUIState
+import com.charan.habitdiary.presentation.common.model.DailyLogItemUIModel
 import kotlinx.datetime.DayOfWeek
 
-data class HabitScreenState(
-    val habits : List<HabitItemUIState> = emptyList(),
-    val dailyLogs : List<DailyLogItemUIState> = emptyList(),
+data class HabitState(
+    val habits : List<HabitItemUIModel> = emptyList(),
+    val dailyLogs : List<DailyLogItemUIModel> = emptyList(),
     val isLoading : Boolean = false,
     val isFabExpanded : Boolean = false,
     val todayDate : String = "",
@@ -14,7 +14,7 @@ data class HabitScreenState(
     val habitSortType : HabitSortType = HabitSortType.ALL_HABITS,
 )
 
-data class HabitItemUIState(
+data class HabitItemUIModel(
     val id : Long,
     val habitName : String,
     val habitDescription : String,

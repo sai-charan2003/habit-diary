@@ -10,11 +10,11 @@ import com.charan.habitdiary.data.local.entity.DailyLogMediaEntity
 import com.charan.habitdiary.data.repository.BackupRepository
 import com.charan.habitdiary.data.repository.DataStoreRepository
 import com.charan.habitdiary.data.repository.FileRepository
-import com.charan.habitdiary.data.repository.HabitLocalRepository
+import com.charan.habitdiary.data.repository.HabitRepository
 import com.charan.habitdiary.data.repository.impl.BackupRepositoryImpl
-import com.charan.habitdiary.data.repository.impl.DateStoreRepositoryImpl
+import com.charan.habitdiary.data.repository.impl.DataStoreRepositoryImpl
 import com.charan.habitdiary.data.repository.impl.FileRepositoryImpl
-import com.charan.habitdiary.data.repository.impl.HabitLocalRepositoryImpl
+import com.charan.habitdiary.data.repository.impl.HabitRepositoryImpl
 import com.charan.habitdiary.notification.NotificationHelper
 import com.charan.habitdiary.notification.NotificationScheduler
 import com.charan.habitdiary.utils.PermissionManager
@@ -51,11 +51,11 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideHabitLocalRepository(
+    fun provideHabitRepository(
         habitDao: HabitDao,
         dailyLogDao: DailyLogDao,
         dailyLogMediaDao: DailyLogMediaDao
-    ): HabitLocalRepository = HabitLocalRepositoryImpl(habitDao, dailyLogDao, dailyLogMediaDao)
+    ): HabitRepository = HabitRepositoryImpl(habitDao, dailyLogDao, dailyLogMediaDao)
 
     @Provides
     @Singleton
@@ -86,17 +86,17 @@ class AppModule {
     @Singleton
     fun provideDataStoreRepository(
         @ApplicationContext context: Context
-    ): DataStoreRepository = DateStoreRepositoryImpl(context)
+    ): DataStoreRepository = DataStoreRepositoryImpl(context)
 
     @Provides
     @Singleton
     fun provideBackupRepository(
         @ApplicationContext context: Context,
-        habitLocalRepository: HabitLocalRepository,
+        habitRepository: HabitRepository,
         notificationScheduler: NotificationScheduler
     ) : BackupRepository= BackupRepositoryImpl(
         context,
-        habitLocalRepository,
+        habitRepository,
         notificationScheduler
     )
 

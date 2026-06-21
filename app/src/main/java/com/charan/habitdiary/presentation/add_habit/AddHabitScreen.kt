@@ -41,7 +41,7 @@ fun AddHabitScreen(
     onNavigateBack : (isHabitDeleted : Boolean) -> Unit ,
     habitId : Long? = null
 ) {
-    val viewModel = hiltViewModel<AddHabitScreenViewModel>()
+    val viewModel = hiltViewModel<AddHabitViewModel>()
     val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val notificationPermissionState = rememberPermissionState(

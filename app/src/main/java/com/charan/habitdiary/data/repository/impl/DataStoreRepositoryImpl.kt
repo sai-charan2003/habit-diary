@@ -12,7 +12,7 @@ import com.charan.habitdiary.data.repository.DataStoreRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class DateStoreRepositoryImpl(
+class DataStoreRepositoryImpl(
     private val context : Context
 ) : DataStoreRepository {
     companion object {

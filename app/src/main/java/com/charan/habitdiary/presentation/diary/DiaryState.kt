@@ -1,7 +1,7 @@
 package com.charan.habitdiary.presentation.diary
 
 import com.charan.habitdiary.data.model.enums.DailyLogSortType
-import com.charan.habitdiary.presentation.common.model.DailyLogItemUIState
+import com.charan.habitdiary.presentation.common.model.DailyLogItemUIModel
 import com.charan.habitdiary.utils.DateUtil
 import com.kizitonwose.calendar.core.minusMonths
 import com.kizitonwose.calendar.core.minusYears
@@ -11,7 +11,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.YearMonth
 import kotlin.time.ExperimentalTime
 @OptIn(ExperimentalTime::class)
-data class DiaryScreenState(
+data class DiaryState(
     val selectedDate : LocalDate = DateUtil.getCurrentDate(),
     val selectedCalendarView : CalendarViewType = CalendarViewType.WEEK,
     val currentMonth : YearMonth  = YearMonth.now(),
@@ -20,7 +20,7 @@ data class DiaryScreenState(
     val currentDate : LocalDate = LocalDate.now(),
     val startOfDate : LocalDate = currentDate.minusMonths(100),
     val endOfDate : LocalDate = currentDate.plusMonths(1),
-    val dailyLogItem : List<DailyLogItemUIState> = emptyList(),
+    val dailyLogItem : List<DailyLogItemUIModel> = emptyList(),
     val datesWithLogs: Set<LocalDate> = emptySet(),
     val visibleStartOfDate : LocalDate = startOfDate,
     val visibleEndOfDate : LocalDate = endOfDate,

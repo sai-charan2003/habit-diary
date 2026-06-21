@@ -9,7 +9,7 @@ import com.charan.habitdiary.data.local.entity.HabitEntity
 import com.charan.habitdiary.data.local.model.DailyLogWithHabit
 import com.charan.habitdiary.data.local.model.HabitWithDone
 import com.charan.habitdiary.data.model.enums.DailyLogSortType
-import com.charan.habitdiary.data.repository.HabitLocalRepository
+import com.charan.habitdiary.data.repository.HabitRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -17,11 +17,11 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
-class HabitLocalRepositoryImpl(
+class HabitRepositoryImpl(
     private val habitDao : HabitDao,
     private val dailyLogDao : DailyLogDao,
     private val dailyLogMediaDao: DailyLogMediaDao
-) : HabitLocalRepository {
+) : HabitRepository {
 
     override fun upsetHabit(habit: HabitEntity) : Long {
         return habitDao.upsetHabit(habit)

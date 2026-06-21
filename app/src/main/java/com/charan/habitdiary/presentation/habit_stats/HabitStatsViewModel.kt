@@ -3,7 +3,7 @@ package com.charan.habitdiary.presentation.habit_stats
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.charan.habitdiary.data.mapper.toDailyLogEntity
-import com.charan.habitdiary.data.repository.HabitLocalRepository
+import com.charan.habitdiary.data.repository.HabitRepository
 import com.charan.habitdiary.utils.DateUtil
 import com.charan.habitdiary.utils.getBestHabitStreak
 import com.charan.habitdiary.utils.getHabitStreak
@@ -27,7 +27,7 @@ import kotlinx.datetime.atTime
 @HiltViewModel(assistedFactory = HabitStatsViewModel.Factory::class)
 class HabitStatsViewModel @AssistedInject constructor(
     @Assisted val habitId : Long,
-    private val habitLocalRepository: HabitLocalRepository
+    private val habitRepository: HabitRepository
 
 ) : ViewModel() {
 
@@ -36,74 +36,74 @@ class HabitStatsViewModel @AssistedInject constructor(
         fun create(habitId : Long): HabitStatsViewModel
     }
 
-    private val _state = MutableStateFlow(HabitStatState())
+    private val _state = MutableStateFlow(HabitStatsState())
     val state = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<HabitStatEffect>()
+    private val _effect = MutableSharedFlow<HabitStatsEffect>()
     val effect  = _effect.asSharedFlow()
     init {
         observeHabitStats()
     }
 
-    fun onEvent(event: HabitStatEvent) {
+    fun onEvent(event: HabitStatsEvent) {
 
         when(event){
-            is HabitStatEvent.OnDateSelected -> {
+            is HabitStatsEvent.OnDateSelected -> {
                 handleSelectedDate(event.date)
             }
-            HabitStatEvent.OnNextMonthClick -> {
-                sendEffect(HabitStatEffect.AnimateToNextMonth)
+            HabitStatsEvent.OnNextMonthClick -> {
+                sendEffect(HabitStatsEffect.AnimateToNextMonth)
             }
-            HabitStatEvent.OnPreviousMonthClick -> {
-                sendEffect(HabitStatEffect.AnimateToPreviousMonth)
+            HabitStatsEvent.OnPreviousMonthClick -> {
+                sendEffect(HabitStatsEffect.AnimateToPreviousMonth)
             }
 
-            is HabitStatEvent.OnCompleteTaskClick -> {
+            is HabitStatsEvent.OnCompleteTaskClick -> {
                 handleCompleteTask(event.date)
             }
 
-            HabitStatEvent.OnAddLog -> {
+            HabitStatsEvent.OnAddLog -> {
                 handleAddLog()
             }
 
-            HabitStatEvent.OnNavigateBackClick -> {
-                sendEffect(HabitStatEffect.OnNavigateBack)
+            HabitStatsEvent.OnNavigateBackClick -> {
+                sendEffect(HabitStatsEffect.OnNavigateBack)
             }
 
-            HabitStatEvent.OnEditHabitClick -> {
-                sendEffect(HabitStatEffect.OnNavigateToEditHabitScreen(_state.value.habitId))
+            HabitStatsEvent.OnEditHabitClick -> {
+                sendEffect(HabitStatsEffect.OnNavigateToEditHabitScreen(_state.value.habitId))
             }
         }
 
     }
 
     private fun handleAddLog() = viewModelScope.launch(Dispatchers.IO) {
-        val logId = habitLocalRepository.getLoggedHabitFromIdForRange(
+        val logId = habitRepository.getLoggedHabitFromIdForRange(
             habitId = _state.value.habitId,
             startOfDay = _state.value.selectedDate.atTime(LocalTime(0,0)),
             endOfDay = _state.value.selectedDate.atTime(LocalTime(23,59))
         )
         logId?.let {
-            sendEffect(HabitStatEffect.OnNavigateToAddLogScreen(it.id))
+            sendEffect(HabitStatsEffect.OnNavigateToAddLogScreen(it.id))
         }
     }
 
     private fun handleCompleteTask(date : LocalDate) = viewModelScope.launch(Dispatchers.IO) {
         val habitLogExists = _state.value.datesWithHabitDone.contains(date)
         if (!habitLogExists){
-            val habit = habitLocalRepository.getHabitWithId(_state.value.habitId)
+            val habit = habitRepository.getHabitWithId(_state.value.habitId)
             val createdTime = date.atTime(DateUtil.getCurrentTime())
-            habitLocalRepository.upsetDailyLog(
+            habitRepository.upsetDailyLog(
                 habit.toDailyLogEntity(date = createdTime)
             )
         } else{
-            val existingLog = habitLocalRepository.getLoggedHabitFromIdForRange(
+            val existingLog = habitRepository.getLoggedHabitFromIdForRange(
                 habitId = _state.value.habitId,
                 startOfDay = date.atTime(LocalTime(0,0)),
                 endOfDay = date.atTime(LocalTime(23,59))
             )
             existingLog?.let {
-                habitLocalRepository.deleteDailyLog(it.id)
+                habitRepository.deleteDailyLog(it.id)
             }
         }
     }
@@ -119,8 +119,8 @@ class HabitStatsViewModel @AssistedInject constructor(
 
     private fun observeHabitStats() = viewModelScope.launch(Dispatchers.IO) {
         combine(
-            habitLocalRepository.getHabitWithIdFlow(habitId),
-            habitLocalRepository.getAllLogsWithHabitId(habitId)
+            habitRepository.getHabitWithIdFlow(habitId),
+            habitRepository.getAllLogsWithHabitId(habitId)
         ) { habit, logs ->
             habit to logs
         }.collectLatest { (habit, logs) ->
@@ -142,7 +142,7 @@ class HabitStatsViewModel @AssistedInject constructor(
     }
 
 
-    private fun sendEffect(effect : HabitStatEffect) = viewModelScope.launch {
+    private fun sendEffect(effect : HabitStatsEffect) = viewModelScope.launch {
         _effect.emit(effect)
     }
 

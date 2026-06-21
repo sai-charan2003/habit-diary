@@ -28,23 +28,23 @@ class MediaViewerViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<MediaViewerEffect>()
     val effect = _effect.asSharedFlow()
 
-    fun onEvent(event : MediaViewerEvents) {
+    fun onEvent(event : MediaViewerEvent) {
         when(event){
-            is MediaViewerEvents.DownloadMedia -> {
+            is MediaViewerEvent.DownloadMedia -> {
                 handleMediaDownload(filePath = event.filePath)
 
             }
 
-            is MediaViewerEvents.ShareMedia -> {
+            is MediaViewerEvent.ShareMedia -> {
                 handleShareMedia(event.filePath)
 
             }
 
-            is MediaViewerEvents.ToggleStoragePermissionRationale -> {
+            is MediaViewerEvent.ToggleStoragePermissionRationale -> {
                 handleStoragePermissionRationale(event.show)
             }
 
-            is MediaViewerEvents.OpenSettingsForPermission -> {
+            is MediaViewerEvent.OpenSettingsForPermission -> {
                 handleOpenSettingsForPermission()
             }
         }

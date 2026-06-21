@@ -10,7 +10,7 @@ import com.charan.habitdiary.data.model.enums.ThemeOption
 import com.charan.habitdiary.data.repository.BackupRepository
 import com.charan.habitdiary.data.repository.DataStoreRepository
 import com.charan.habitdiary.presentation.common.model.ToastMessage
-import com.charan.habitdiary.presentation.settings.SettingsScreenEffect.*
+import com.charan.habitdiary.presentation.settings.SettingsEffect.*
 import com.charan.habitdiary.utils.GITHUB_URL
 import com.charan.habitdiary.utils.PLAY_STORE_URL
 import com.charan.habitdiary.utils.ProcessState
@@ -35,7 +35,7 @@ class SettingsViewModel @Inject constructor(
     private val _state = MutableStateFlow(SettingsState())
     val state = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<SettingsScreenEffect>()
+    private val _effect = MutableSharedFlow<SettingsEffect>()
     val effect = _effect.asSharedFlow()
 
     init {
@@ -44,66 +44,66 @@ class SettingsViewModel @Inject constructor(
     }
 
 
-    fun onEvent(event: SettingsScreenEvent) {
+    fun onEvent(event: SettingsEvent) {
         when(event){
-            is SettingsScreenEvent.OnThemeChange -> {
+            is SettingsEvent.OnThemeChange -> {
                 changeTheme(event.theme)
             }
-            is SettingsScreenEvent.OnTimeFormatChange -> {
+            is SettingsEvent.OnTimeFormatChange -> {
                 changeTimeFormat(event.is24HourFormat)
 
             }
 
-            is SettingsScreenEvent.OnDynamicColorsChange -> {
+            is SettingsEvent.OnDynamicColorsChange -> {
                 setDynamicColorsState(event.isEnabled)
             }
 
-            SettingsScreenEvent.OnAboutLibrariesClick -> {
-                sendEvent(NavigateToLibrariesScreen)
+            SettingsEvent.OnAboutLibrariesClick -> {
+                sendEffect(NavigateToLibrariesScreen)
             }
-            SettingsScreenEvent.OnBack -> {
-                sendEvent(OnBack)
+            SettingsEvent.OnBack -> {
+                sendEffect(OnBack)
             }
 
-            is SettingsScreenEvent.BackupData -> {
+            is SettingsEvent.BackupData -> {
                 backupData(event.uri)
 
             }
-            SettingsScreenEvent.OnExportDataClick -> {
-                sendEvent(LaunchCreateDocument(backupRepository.fileName))
+            SettingsEvent.OnExportDataClick -> {
+                sendEffect(LaunchCreateDocument(backupRepository.fileName))
             }
 
-            SettingsScreenEvent.OnImportDataClick -> {
-                sendEvent(LaunchOpenDocument)
+            SettingsEvent.OnImportDataClick -> {
+                sendEffect(LaunchOpenDocument)
 
             }
 
-            is SettingsScreenEvent.RestoreBackup -> {
+            is SettingsEvent.RestoreBackup -> {
                 importData(event.uri)
             }
 
-            is SettingsScreenEvent.OnUseSystemFontChange -> {
+            is SettingsEvent.OnUseSystemFontChange -> {
                 handleUseSystemFont(event.useSystemFont)
             }
 
-            is SettingsScreenEvent.OnBiometricLockChange -> {
+            is SettingsEvent.OnBiometricLockChange -> {
                 handleBiometricLockChange(event.isEnabled)
 
             }
 
-            is SettingsScreenEvent.OnOpenSourceCodeClick -> {
-                sendEvent(OpenUrl(GITHUB_URL))
+            is SettingsEvent.OnOpenSourceCodeClick -> {
+                sendEffect(OpenUrl(GITHUB_URL))
             }
 
-            SettingsScreenEvent.OnSendFeedbackClick -> {
-                sendEvent(LaunchSendFeedbackEmail)
+            SettingsEvent.OnSendFeedbackClick -> {
+                sendEffect(LaunchSendFeedbackEmail)
             }
 
-            SettingsScreenEvent.OnRateAppClick -> {
-                sendEvent(OpenUrl(PLAY_STORE_URL))
+            SettingsEvent.OnRateAppClick -> {
+                sendEffect(OpenUrl(PLAY_STORE_URL))
             }
 
-            SettingsScreenEvent.OnToggleChangeLogClick -> {
+            SettingsEvent.OnToggleChangeLogClick -> {
                 handleChangeLogClick()
             }
         }
@@ -205,7 +205,7 @@ class SettingsViewModel @Inject constructor(
                     )
                 }
                 updateBiometricPreference(false)
-                sendEvent(
+                sendEffect(
                     ShowToast(ToastMessage.Res(R.string.biometric_unavailable))
                 )
 
@@ -217,8 +217,8 @@ class SettingsViewModel @Inject constructor(
         dataStore.setBiometricLockEnabled(isEnabled)
     }
 
-    private fun sendEvent(event : SettingsScreenEffect) = viewModelScope.launch{
-            _effect.emit(event)
+    private fun sendEffect(effect : SettingsEffect) = viewModelScope.launch{
+            _effect.emit(effect)
 
     }
 
@@ -240,7 +240,7 @@ class SettingsViewModel @Inject constructor(
                             isExporting = false
                         )
                     }
-                    sendEvent(SettingsScreenEffect.ShowToast(ToastMessage.Text(state.exception)))
+                    sendEffect(SettingsEffect.ShowToast(ToastMessage.Text(state.exception)))
 
                 }
                 is ProcessState.Loading -> {
@@ -258,7 +258,7 @@ class SettingsViewModel @Inject constructor(
                             isExporting = false
                         )
                     }
-                    sendEvent(SettingsScreenEffect.ShowToast(ToastMessage.Res(R.string.backup_restored)))
+                    sendEffect(SettingsEffect.ShowToast(ToastMessage.Res(R.string.backup_restored)))
                 }
             }
         }
@@ -273,7 +273,7 @@ class SettingsViewModel @Inject constructor(
                             isImporting = false
                         )
                     }
-                    sendEvent(SettingsScreenEffect.ShowToast(ToastMessage.Text(state.exception)))
+                    sendEffect(SettingsEffect.ShowToast(ToastMessage.Text(state.exception)))
                 }
                 is ProcessState.Loading -> {
                     _state.update {
@@ -289,7 +289,7 @@ class SettingsViewModel @Inject constructor(
                             isImporting = false
                         )
                     }
-                    sendEvent(SettingsScreenEffect.ShowToast(ToastMessage.Res(R.string.backup_restored)))
+                    sendEffect(SettingsEffect.ShowToast(ToastMessage.Res(R.string.backup_restored)))
                 }
             }
 

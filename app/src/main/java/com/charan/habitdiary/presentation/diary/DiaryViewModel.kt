@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.charan.habitdiary.data.model.enums.DailyLogSortType
 import com.charan.habitdiary.data.repository.DataStoreRepository
-import com.charan.habitdiary.data.repository.HabitLocalRepository
-import com.charan.habitdiary.presentation.diary.DiaryScreenEffect.*
+import com.charan.habitdiary.data.repository.HabitRepository
+import com.charan.habitdiary.presentation.diary.DiaryEffect.*
 import com.charan.habitdiary.presentation.mapper.toDailyLogUIStateList
 import com.charan.habitdiary.utils.DateUtil.getEndOfDay
 import com.charan.habitdiary.utils.DateUtil.getStartOfDay
@@ -28,14 +28,14 @@ import javax.inject.Inject
 import kotlin.time.ExperimentalTime
 
 @HiltViewModel
-class DiaryScreenViewModel @Inject constructor(
-    private val habitLocalRepository: HabitLocalRepository,
+class DiaryViewModel @Inject constructor(
+    private val habitRepository: HabitRepository,
     private val dataStoreRepo: DataStoreRepository
 ) : ViewModel() {
-    private val _state = MutableStateFlow(DiaryScreenState())
+    private val _state = MutableStateFlow(DiaryState())
     val state = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<DiaryScreenEffect>()
+    private val _effect = MutableSharedFlow<DiaryEffect>()
     val effect = _effect.asSharedFlow()
     init {
         fetchDailyLogsForDate()
@@ -44,31 +44,31 @@ class DiaryScreenViewModel @Inject constructor(
     }
 
 
-    fun onEvent(event: DiaryScreenEvents) {
+    fun onEvent(event: DiaryEvent) {
         when (event) {
-            is DiaryScreenEvents.OnDateSelected -> {
+            is DiaryEvent.OnDateSelected -> {
                 selectDateChange(event.date)
             }
 
-            is DiaryScreenEvents.OnDiaryViewTypeChange -> {
+            is DiaryEvent.OnDiaryViewTypeChange -> {
                 calendarViewChange(event.viewType)
                 sendEffect(ScrollToSelectedDate)
             }
 
-            DiaryScreenEvents.OnScrollToCurrentDate -> {
+            DiaryEvent.OnScrollToCurrentDate -> {
                 scrollToCurrentDate()
             }
 
-            is DiaryScreenEvents.OnNavigateToAddDailyLogScreen -> {
+            is DiaryEvent.OnNavigateToAddDailyLogScreen -> {
                 sendEffect(OnNavigateToAddDailyLogScreen(event.id))
             }
 
-            is DiaryScreenEvents.OnVisibleDateRangeChange -> {
+            is DiaryEvent.OnVisibleDateRangeChange -> {
                 handleDateRangeChange(event.startDate, event.endDate)
 
 
             }
-            DiaryScreenEvents.OnSortTypeChange -> {
+            DiaryEvent.OnSortTypeChange -> {
                 handleSortTypeChange()
             }
 
@@ -109,7 +109,7 @@ class DiaryScreenViewModel @Inject constructor(
                 selectedDate = it.currentDate
             )
         }
-        sendEffect(DiaryScreenEffect.ScrollToCurrentDate)
+        sendEffect(DiaryEffect.ScrollToCurrentDate)
     }
 
     fun calendarViewChange(viewType : CalendarViewType) = viewModelScope.launch {
@@ -121,7 +121,7 @@ class DiaryScreenViewModel @Inject constructor(
 
     }
 
-    private fun sendEffect(effect : DiaryScreenEffect) = viewModelScope.launch{
+    private fun sendEffect(effect : DiaryEffect) = viewModelScope.launch{
             _effect.emit(effect)
     }
 
@@ -134,7 +134,7 @@ class DiaryScreenViewModel @Inject constructor(
         ) { date, sortType, is24Hours ->
             val start = date.getStartOfDay()
             val end = date.getEndOfDay()
-            val logsFlow = habitLocalRepository.getDailyLogsInRange(start, end, sortType)
+            val logsFlow = habitRepository.getDailyLogsInRange(start, end, sortType)
             logsFlow.map { logs ->
                 logs.toDailyLogUIStateList(is24Hours)
             }
@@ -151,7 +151,7 @@ class DiaryScreenViewModel @Inject constructor(
                 .map { it.visibleStartOfDate to it.visibleEndOfDate }
                 .distinctUntilChanged()
                 .flatMapLatest { range ->
-                    habitLocalRepository.getLoggedDatesInRange(range.first.getStartOfDay(), range.second.getEndOfDay())
+                    habitRepository.getLoggedDatesInRange(range.first.getStartOfDay(), range.second.getEndOfDay())
                 }
                 .collectLatest { dates ->
                     _state.update { it.copy(datesWithLogs = dates.toSet()) }

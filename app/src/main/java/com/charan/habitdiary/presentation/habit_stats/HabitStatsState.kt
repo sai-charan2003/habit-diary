@@ -10,7 +10,7 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.YearMonth
 import kotlin.time.ExperimentalTime
 @OptIn(ExperimentalTime::class)
-data class HabitStatState(
+data class HabitStatsState(
     val habitId : Long = -1,
     val habitName : String = "",
     val habitDescription : String = "",

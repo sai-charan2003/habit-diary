@@ -3,7 +3,7 @@ package com.charan.habitdiary.presentation.add_habit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.charan.habitdiary.data.repository.DataStoreRepository
-import com.charan.habitdiary.data.repository.HabitLocalRepository
+import com.charan.habitdiary.data.repository.HabitRepository
 import com.charan.habitdiary.notification.NotificationScheduler
 import com.charan.habitdiary.presentation.mapper.toHabitEntity
 import com.charan.habitdiary.utils.DateUtil.toFormattedString
@@ -24,8 +24,8 @@ import kotlinx.datetime.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
-class AddHabitScreenViewModel @Inject constructor(
-    private val habitLocalRepository: HabitLocalRepository,
+class AddHabitViewModel @Inject constructor(
+    private val habitRepository: HabitRepository,
     private val permissionManager : PermissionManager,
     private val notificationScheduler: NotificationScheduler,
     private val dataStore : DataStoreRepository
@@ -113,7 +113,7 @@ class AddHabitScreenViewModel @Inject constructor(
     }
 
     private fun deleteHabit() = viewModelScope.launch(Dispatchers.IO) {
-        habitLocalRepository.deleteHabit(
+        habitRepository.deleteHabit(
             _state.value.habitId ?: return@launch
         )
         _state.update {
@@ -155,7 +155,7 @@ class AddHabitScreenViewModel @Inject constructor(
 
     private fun initializeHabit(habitId : Long?) = viewModelScope.launch(Dispatchers.IO){
         if(habitId!=null){
-            val habit = habitLocalRepository.getHabitWithId(habitId)
+            val habit = habitRepository.getHabitWithId(habitId)
             val habitTime = habit.habitTime
             val reminderTime = habit.habitReminder
             _state.update {
@@ -203,7 +203,7 @@ class AddHabitScreenViewModel @Inject constructor(
 
 
     private fun saveHabit() = viewModelScope.launch(Dispatchers.IO) {
-        val id = habitLocalRepository.upsetHabit(_state.value.toHabitEntity())
+        val id = habitRepository.upsetHabit(_state.value.toHabitEntity())
         notificationScheduler.scheduleReminder(
             habitId = id,
             time = _state.value.habitReminderTime ?: LocalTime(8,0),

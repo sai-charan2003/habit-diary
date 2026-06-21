@@ -19,7 +19,7 @@ class OnBoardingViewModel @Inject constructor(
 ) : ViewModel(){
     private val _state = MutableStateFlow(OnBoardingState())
     val state = _state.asStateFlow()
-    private val _effect = MutableSharedFlow<OnBoardingEffects>()
+    private val _effect = MutableSharedFlow<OnBoardingEffect>()
     val effect = _effect.asSharedFlow()
 
     fun onEvent(event : OnBoardingEvent) {
@@ -41,10 +41,10 @@ class OnBoardingViewModel @Inject constructor(
         if(nextPage == state.value.onBoardingPage.size){
             dataStoreRepo.setOnBoardingCompleted(true)
             dataStoreRepo.setLastScreenChangeLogVersion(getAppVersion())
-            sendEvent(OnBoardingEffects.NavigateToHome)
+            sendEffect(OnBoardingEffect.NavigateToHome)
             return@launch
         }
-        sendEvent(OnBoardingEffects.OnScrollToPage(nextPage))
+        sendEffect(OnBoardingEffect.OnScrollToPage(nextPage))
         onPageChange(nextPage)
     }
 
@@ -56,7 +56,7 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    private fun sendEvent(effect : OnBoardingEffects) = viewModelScope.launch {
+    private fun sendEffect(effect : OnBoardingEffect) = viewModelScope.launch {
        _effect.emit(effect)
     }
 }

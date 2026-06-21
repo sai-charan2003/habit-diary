@@ -10,7 +10,7 @@ import com.charan.habitdiary.data.local.entity.HabitEntity
 import com.charan.habitdiary.data.local.model.BackupMetaData
 import com.charan.habitdiary.data.repository.BackupRepository
 import com.charan.habitdiary.data.repository.FileRepository
-import com.charan.habitdiary.data.repository.HabitLocalRepository
+import com.charan.habitdiary.data.repository.HabitRepository
 import com.charan.habitdiary.data.repository.impl.FileRepositoryImpl.Companion.HABIT_DIARY_IMAGES
 import com.charan.habitdiary.data.repository.impl.FileRepositoryImpl.Companion.HABIT_DIARY_MEDIA_DIR
 import com.charan.habitdiary.notification.NotificationScheduler
@@ -34,7 +34,7 @@ import kotlin.random.Random
 
 class BackupRepositoryImpl(
     private val context : Context,
-    private val habitLocalRepository: HabitLocalRepository,
+    private val habitRepository: HabitRepository,
     private val notificationScheduler: NotificationScheduler
 ) : BackupRepository{
     companion object{
@@ -58,9 +58,9 @@ class BackupRepositoryImpl(
         }
         emit(ProcessState.Loading())
         try {
-            val habits = habitLocalRepository.getAllHabits()
-            val dailyLogs = habitLocalRepository.getAllDailyLogs()
-            val media = habitLocalRepository.getAllMedia()
+            val habits = habitRepository.getAllHabits()
+            val dailyLogs = habitRepository.getAllDailyLogs()
+            val media = habitRepository.getAllMedia()
             val metaData = BackupMetaData(
                 versionCode = BuildConfig.VERSION_CODE.toString(),
                 appVersion = BuildConfig.VERSION_NAME,
@@ -191,7 +191,7 @@ class BackupRepositoryImpl(
             val habitIdMap = mutableMapOf<Long, Long>()
             if (importedHabits.isNotEmpty()) {
                 val insertHabits = importedHabits.map { it.copy(id = 0) }
-                val newIds = habitLocalRepository.insertHabits(insertHabits)
+                val newIds = habitRepository.insertHabits(insertHabits)
 
                 importedHabits.forEachIndexed { index, oldHabit ->
                     habitIdMap[oldHabit.id] = newIds[index]
@@ -220,7 +220,7 @@ class BackupRepositoryImpl(
                     )
                 }
 
-                val newIds = habitLocalRepository.insertDailyLogs(insertDailyLogs)
+                val newIds = habitRepository.insertDailyLogs(insertDailyLogs)
 
                 insertDailyLogs.forEachIndexed { index, newLog ->
                     newDailyLogIdMap[importedDailyLogs[index].id] = newIds[index]
@@ -239,7 +239,7 @@ class BackupRepositoryImpl(
                     )
                 }
 
-                habitLocalRepository.upsetDailyLogMediaEntities(finalMediaEntities)
+                habitRepository.upsetDailyLogMediaEntities(finalMediaEntities)
             }
 
             emit(ProcessState.Success(true))

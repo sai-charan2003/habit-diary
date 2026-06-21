@@ -78,27 +78,27 @@ fun HabitStatsScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                HabitStatEffect.AnimateToNextMonth -> {
+                HabitStatsEffect.AnimateToNextMonth -> {
                     monthCalendarState.animateScrollToMonth(
                         month = monthCalendarState.lastVisibleMonth.yearMonth.plusMonths(1)
                     )
                 }
-                HabitStatEffect.AnimateToPreviousMonth -> {
+                HabitStatsEffect.AnimateToPreviousMonth -> {
                     monthCalendarState.animateScrollToMonth(
                         month = monthCalendarState.lastVisibleMonth.yearMonth.minusMonths(1)
                     )
                 }
-                HabitStatEffect.OnNavigateBack -> {
+                HabitStatsEffect.OnNavigateBack -> {
                     onNavigateBack()
 
                 }
 
-                is HabitStatEffect.OnNavigateToAddLogScreen -> {
+                is HabitStatsEffect.OnNavigateToAddLogScreen -> {
                     onAddLog(effect.logId)
 
                 }
 
-                is HabitStatEffect.OnNavigateToEditHabitScreen -> {
+                is HabitStatsEffect.OnNavigateToEditHabitScreen -> {
                     onEditHabit(effect.habitId)
                 }
             }
@@ -117,10 +117,10 @@ fun HabitStatsScreen(
                     isDone = state.datesWithHabitDone.contains(state.selectedDate),
                     hasLog = false,
                     onCompleteHabit = {
-                        viewModel.onEvent(HabitStatEvent.OnCompleteTaskClick(state.selectedDate))
+                        viewModel.onEvent(HabitStatsEvent.OnCompleteTaskClick(state.selectedDate))
                     },
                     onCreateJournal = {
-                        viewModel.onEvent(HabitStatEvent.OnAddLog)
+                        viewModel.onEvent(HabitStatsEvent.OnAddLog)
                     }
                 )
         },
@@ -134,13 +134,13 @@ fun HabitStatsScreen(
                 scrollBehavior = scrollBehavior,
                 showBackButton = true,
                 onBackClick = {
-                    viewModel.onEvent(HabitStatEvent.OnNavigateBackClick)
+                    viewModel.onEvent(HabitStatsEvent.OnNavigateBackClick)
                 },
 
                 actions = {
                     FilledTonalIconButton(
                         onClick = {
-                            viewModel.onEvent(HabitStatEvent.OnEditHabitClick)
+                            viewModel.onEvent(HabitStatsEvent.OnEditHabitClick)
                         },
                         modifier = Modifier.size(
                             IconButtonDefaults.
@@ -196,14 +196,14 @@ fun HabitStatsScreen(
                     currentDate = state.currentDate,
                     selectedDate = state.selectedDate,
                     onClick = {
-                        viewModel.onEvent(HabitStatEvent.OnDateSelected(it))
+                        viewModel.onEvent(HabitStatsEvent.OnDateSelected(it))
 
                     },
                     onPreviousMonthClick = {
-                        viewModel.onEvent(HabitStatEvent.OnPreviousMonthClick)
+                        viewModel.onEvent(HabitStatsEvent.OnPreviousMonthClick)
                     },
                     onNextMonthClick = {
-                        viewModel.onEvent(HabitStatEvent.OnNextMonthClick)
+                        viewModel.onEvent(HabitStatsEvent.OnNextMonthClick)
 
                     },
                     visibleMonth = monthCalendarState.lastVisibleMonth.yearMonth.month,

@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.charan.habitdiary.R
 import com.charan.habitdiary.data.repository.DataStoreRepository
 import com.charan.habitdiary.data.repository.FileRepository
-import com.charan.habitdiary.data.repository.HabitLocalRepository
+import com.charan.habitdiary.data.repository.HabitRepository
 import com.charan.habitdiary.presentation.common.model.ToastMessage
 import com.charan.habitdiary.presentation.mapper.toDailyLogEntity
 import com.charan.habitdiary.presentation.mapper.toDailyLogItemDetails
@@ -38,7 +38,7 @@ class DailyLogViewModel @AssistedInject constructor(
     @Assisted("openImageCapture") val openImageCaptureOnLaunch: Boolean?,
     @Assisted("openVideoCapture") val openVideoRecordingOnLaunch: Boolean?,
     @Assisted("sharedMediaItems") val sharedMediaItems : List<String>?,
-    private val habitLocalRepository: HabitLocalRepository,
+    private val habitRepository: HabitRepository,
     private val fileRepository: FileRepository,
     private val permissionManager: PermissionManager,
     private val dataStoreRepository: DataStoreRepository
@@ -241,7 +241,7 @@ class DailyLogViewModel @AssistedInject constructor(
 
     private fun initializeLog(logId: Long?) = viewModelScope.launch(Dispatchers.IO) {
         if (logId != null) {
-            val log = habitLocalRepository.getDailyLogsWithHabitWithId(logId)
+            val log = habitRepository.getDailyLogsWithHabitWithId(logId)
             _state.update {
                 it.copy(
                     dailyLogItemDetails = log.toDailyLogItemDetails(),
@@ -330,7 +330,7 @@ class DailyLogViewModel @AssistedInject constructor(
         try {
             setLoading(true)
             saveImagesToFileDir()
-            habitLocalRepository.upsetDailyLog(
+            habitRepository.upsetDailyLog(
                 dailyLog = _state.value.toDailyLogEntity(),
                 mediaEntity = _state.value.dailyLogItemDetails.mediaItems.toDailyLogMediaEntityList()
             )
@@ -434,7 +434,7 @@ class DailyLogViewModel @AssistedInject constructor(
 
     private fun deleteDailyLog() = viewModelScope.launch(Dispatchers.IO) {
         val id = _state.value.dailyLogItemDetails.id ?: return@launch
-        habitLocalRepository.deleteDailyLog(id)
+        habitRepository.deleteDailyLog(id)
         _state.update {
             it.copy(showDeleteDialog = false)
         }

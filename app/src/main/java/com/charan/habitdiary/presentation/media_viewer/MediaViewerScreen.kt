@@ -52,7 +52,7 @@ import kotlin.math.abs
     ExperimentalPermissionsApi::class
 )
 @Composable
-fun ImageViewerScreen(
+fun MediaViewerScreen(
     allImages: List<String>,
     currentImage: String,
     onBack: () -> Unit
@@ -66,7 +66,7 @@ fun ImageViewerScreen(
     val storagePermission = rememberPermissionState(Manifest.permission.WRITE_EXTERNAL_STORAGE){ isGranted ->
         if(isGranted){
             viewModel.onEvent(
-                MediaViewerEvents.DownloadMedia(
+                MediaViewerEvent.DownloadMedia(
                     filePath = allImages[pageState.currentPage]
                 )
             )
@@ -98,7 +98,7 @@ fun ImageViewerScreen(
 
                 is MediaViewerEffect.RequestStoragePermission -> {
                     if(storagePermission.status.shouldShowRationale){
-                        viewModel.onEvent(MediaViewerEvents.ToggleStoragePermissionRationale(true))
+                        viewModel.onEvent(MediaViewerEvent.ToggleStoragePermissionRationale(true))
 
                     } else{
                         storagePermission.launchPermissionRequest()
@@ -114,11 +114,11 @@ fun ImageViewerScreen(
             title = stringResource(R.string.storage_permission_required),
             message = stringResource(R.string.storage_permission_description),
             onDismissRequest = {
-                viewModel.onEvent(MediaViewerEvents.ToggleStoragePermissionRationale(false))
+                viewModel.onEvent(MediaViewerEvent.ToggleStoragePermissionRationale(false))
             },
             onConfirmRequest = {
-                viewModel.onEvent(MediaViewerEvents.ToggleStoragePermissionRationale(false))
-                viewModel.onEvent(MediaViewerEvents.OpenSettingsForPermission)
+                viewModel.onEvent(MediaViewerEvent.ToggleStoragePermissionRationale(false))
+                viewModel.onEvent(MediaViewerEvent.OpenSettingsForPermission)
             }
         )
     }
@@ -131,14 +131,14 @@ fun ImageViewerScreen(
                 actions = {
                     MediaActionButton(
                         onShareClick = {
-                            viewModel.onEvent(MediaViewerEvents.ShareMedia(
+                            viewModel.onEvent(MediaViewerEvent.ShareMedia(
                                 filePath = allImages[pageState.currentPage],
                             ))
 
 
                         },
                         onSaveClick = {
-                            viewModel.onEvent(MediaViewerEvents.DownloadMedia(
+                            viewModel.onEvent(MediaViewerEvent.DownloadMedia(
                                 filePath = allImages[pageState.currentPage],
                             ))
 

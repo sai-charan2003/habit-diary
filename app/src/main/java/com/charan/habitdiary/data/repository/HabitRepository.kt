@@ -12,7 +12,7 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
-interface HabitLocalRepository {
+interface HabitRepository {
 
     fun upsetHabit(habit: HabitEntity): Long
 

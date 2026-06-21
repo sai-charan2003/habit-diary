@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.charan.habitdiary.data.local.model.HabitWithDone
 import com.charan.habitdiary.data.model.enums.HabitSortType
 import com.charan.habitdiary.data.repository.DataStoreRepository
-import com.charan.habitdiary.data.repository.HabitLocalRepository
-import com.charan.habitdiary.presentation.habits.HabitScreenEffect.*
+import com.charan.habitdiary.data.repository.HabitRepository
+import com.charan.habitdiary.presentation.habits.HabitEffect.*
 import com.charan.habitdiary.presentation.mapper.toDailyLogEntity
 import com.charan.habitdiary.presentation.mapper.toDailyLogUIStateList
 import com.charan.habitdiary.presentation.mapper.toHabitUIState
@@ -29,15 +29,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HabitScreenViewModel @Inject constructor(
-    private val habitLocalRepository: HabitLocalRepository,
+class HabitViewModel @Inject constructor(
+    private val habitRepository: HabitRepository,
     private val dataStoreRepo : DataStoreRepository
 
 ): ViewModel() {
-    private val _state = MutableStateFlow(HabitScreenState())
+    private val _state = MutableStateFlow(HabitState())
     val state = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<HabitScreenEffect>()
+    private val _effect = MutableSharedFlow<HabitEffect>()
     val effect  = _effect.asSharedFlow()
     init {
         getHabits()
@@ -52,42 +52,42 @@ class HabitScreenViewModel @Inject constructor(
 
     }
 
-    fun onEvent(event : HabitScreenEvent){
+    fun onEvent(event : HabitEvent){
         when(event){
-            is HabitScreenEvent.OnFabExpandToggle -> {
+            is HabitEvent.OnFabExpandToggle -> {
                 _state.value = state.value.copy(
                     isFabExpanded = !state.value.isFabExpanded
                 )
             }
 
-            HabitScreenEvent.OnAddDailyLogClick -> {
+            HabitEvent.OnAddDailyLogClick -> {
                 sendEffect(OnNavigateToAddDailyLogScreen(null))
 
             }
 
-            HabitScreenEvent.OnAddHabitClick ->{
+            HabitEvent.OnAddHabitClick ->{
                 sendEffect(OnNavigateToAddHabitScreen(null))
 
             }
 
-            is HabitScreenEvent.OnHabitCheckToggle -> {
+            is HabitEvent.OnHabitCheckToggle -> {
                 onAddHabitClick(event.habit,event.isChecked)
 
             }
 
-            is HabitScreenEvent.OnDailyLogEdit -> {
+            is HabitEvent.OnDailyLogEdit -> {
                 sendEffect(OnNavigateToAddDailyLogScreen(event.id))
             }
 
-            is HabitScreenEvent.OnHabitStatsScreen -> {
+            is HabitEvent.OnHabitStatsScreen -> {
                 sendEffect(OnNavigateToHabitStatsScreen(event.id))
             }
 
-            is HabitScreenEvent.OnSortTypeChange -> {
+            is HabitEvent.OnSortTypeChange -> {
                 handleSortTypeChange(event.sortType)
             }
 
-            HabitScreenEvent.OnSortDropDownToggle -> {
+            HabitEvent.OnSortDropDownToggle -> {
                 toggleSortDropDown()
             }
         }
@@ -109,10 +109,10 @@ class HabitScreenViewModel @Inject constructor(
     fun observeHabits(sortType: HabitSortType): Flow<List<HabitWithDone>> {
         return when (sortType) {
             HabitSortType.ALL_HABITS -> {
-                habitLocalRepository.getActiveHabits()
+                habitRepository.getActiveHabits()
             }
             HabitSortType.TODAY_HABITS -> {
-                habitLocalRepository.getTodayHabits()
+                habitRepository.getTodayHabits()
             }
         }
     }
@@ -138,7 +138,7 @@ class HabitScreenViewModel @Inject constructor(
 
 //    private fun getDailyLogs() = viewModelScope.launch(Dispatchers.IO) {
 //        combine(
-//            habitLocalRepository.getDailyLogsInRange(),
+//            habitRepository.getDailyLogsInRange(),
 //            _state.map { it.is24HourFormat }.distinctUntilChanged()
 //        ) { logs, is24Hours ->
 //            logs.toDailyLogUIStateList(is24Hours)
@@ -148,15 +148,15 @@ class HabitScreenViewModel @Inject constructor(
 //    }
 
 
-    private fun sendEffect(effect : HabitScreenEffect) = viewModelScope.launch {
+    private fun sendEffect(effect : HabitEffect) = viewModelScope.launch {
         _effect.emit(effect)
     }
 
-    private fun onAddHabitClick(habitUI : HabitItemUIState,isChecked : Boolean) = viewModelScope.launch(Dispatchers.IO) {
+    private fun onAddHabitClick(habitUI : HabitItemUIModel,isChecked : Boolean) = viewModelScope.launch(Dispatchers.IO) {
         if (isChecked) {
-            habitLocalRepository.upsetDailyLog(habitUI.toDailyLogEntity(DateUtil.getCurrentDateTime()))
+            habitRepository.upsetDailyLog(habitUI.toDailyLogEntity(DateUtil.getCurrentDateTime()))
         } else {
-            habitLocalRepository.deleteDailyLog(habitUI.logId ?: return@launch)
+            habitRepository.deleteDailyLog(habitUI.logId ?: return@launch)
         }
     }
 

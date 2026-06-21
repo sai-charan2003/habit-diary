@@ -46,22 +46,22 @@ fun HabitScreen(
     onHabitStats : (id : Long)-> Unit
 
     ) {
-    val viewModel = hiltViewModel<HabitScreenViewModel>()
+    val viewModel = hiltViewModel<HabitViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when(effect){
 
-                is HabitScreenEffect.OnNavigateToAddHabitScreen -> {
+                is HabitEffect.OnNavigateToAddHabitScreen -> {
                     onHabitDetails(effect.id)
                 }
 
-                is HabitScreenEffect.OnNavigateToAddDailyLogScreen -> {
+                is HabitEffect.OnNavigateToAddDailyLogScreen -> {
                     onAddDailyLog(effect.id)
                 }
 
-                is HabitScreenEffect.OnNavigateToHabitStatsScreen -> {
+                is HabitEffect.OnNavigateToHabitStatsScreen -> {
                     onHabitStats(effect.habitId)
                 }
             }
@@ -78,7 +78,7 @@ fun HabitScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    viewModel.onEvent(HabitScreenEvent.OnAddHabitClick)
+                    viewModel.onEvent(HabitEvent.OnAddHabitClick)
                 }
             ) {
                 Icon(
@@ -98,10 +98,10 @@ fun HabitScreen(
             item {
                 SortButton(
                     onClick = {
-                        viewModel.onEvent(HabitScreenEvent.OnSortDropDownToggle)
+                        viewModel.onEvent(HabitEvent.OnSortDropDownToggle)
                     },
                     onSortSelected = {
-                        viewModel.onEvent(HabitScreenEvent.OnSortTypeChange(it))
+                        viewModel.onEvent(HabitEvent.OnSortTypeChange(it))
                     },
                     selectedSortTypeRes = state.habitSortType.toLocaleString(),
                     isExpanded = state.isSortDropDownExpanded,
@@ -124,7 +124,7 @@ fun HabitScreen(
                     description = habit.habitDescription,
                     onCompletedChange = { checked->
                         viewModel.onEvent(
-                            HabitScreenEvent.OnHabitCheckToggle(
+                            HabitEvent.OnHabitCheckToggle(
                                 habit = habit,
                                 isChecked = checked
                             )
@@ -133,7 +133,7 @@ fun HabitScreen(
                     isCompleted = habit.isDone,
                     onClick = {
                         viewModel.onEvent(
-                            HabitScreenEvent.OnHabitStatsScreen(
+                            HabitEvent.OnHabitStatsScreen(
                                 habit.id
                             )
                         )

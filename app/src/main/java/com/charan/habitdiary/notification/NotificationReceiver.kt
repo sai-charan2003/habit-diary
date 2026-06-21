@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.charan.habitdiary.data.local.entity.DailyLogEntity
-import com.charan.habitdiary.data.repository.HabitLocalRepository
+import com.charan.habitdiary.data.repository.HabitRepository
 import com.charan.habitdiary.utils.DateUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -15,7 +15,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class NotificationReceiver : BroadcastReceiver() {
     @Inject lateinit var notificationHelper: NotificationHelper
-    @Inject lateinit var habitLocalRepository: HabitLocalRepository
+    @Inject lateinit var habitRepository: HabitRepository
 
     @Inject lateinit var notificationScheduler: NotificationScheduler
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -28,8 +28,8 @@ class NotificationReceiver : BroadcastReceiver() {
                     IntentActions.SHOW_NOTIFICATION.name -> {
                         val habitId = intent?.getLongExtra("habitId", -1) ?: -1
                         if (habitId != -1L && appContext != null) {
-                            val habit = habitLocalRepository.getHabitWithId(habitId)
-                            val habitLog = habitLocalRepository.getLoggedHabitFromIdForRange(habitId)
+                            val habit = habitRepository.getHabitWithId(habitId)
+                            val habitLog = habitRepository.getLoggedHabitFromIdForRange(habitId)
                             if(habitLog == null){
                                 notificationHelper.showNotification(
                                     title = "Habit Reminder",
@@ -49,10 +49,10 @@ class NotificationReceiver : BroadcastReceiver() {
                     IntentActions.MARK_AS_DONE.name -> {
                         val habitId = intent?.getLongExtra("habitId", -1) ?: -1
                         if (habitId != -1L) {
-                            val habit = habitLocalRepository.getHabitWithId(habitId)
-                            val habitLog = habitLocalRepository.getLoggedHabitFromIdForRange(habitId)
+                            val habit = habitRepository.getHabitWithId(habitId)
+                            val habitLog = habitRepository.getLoggedHabitFromIdForRange(habitId)
                             if(habitLog == null){
-                                habitLocalRepository.upsetDailyLog(
+                                habitRepository.upsetDailyLog(
                                     DailyLogEntity(
                                         logNote = "",
                                         imagePath = "",

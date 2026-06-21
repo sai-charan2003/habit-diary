@@ -1,6 +1,6 @@
 package com.charan.habitdiary.presentation.common.model
 
-data class DailyLogItemUIState(
+data class DailyLogItemUIModel(
     val id : Long,
     val logNote : String,
     val mediaPaths : List<String>,

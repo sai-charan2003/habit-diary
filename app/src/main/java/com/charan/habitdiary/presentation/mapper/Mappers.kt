@@ -9,15 +9,15 @@ import com.charan.habitdiary.presentation.add_daily_log.DailyLogItemDetails
 import com.charan.habitdiary.presentation.add_daily_log.DailyLogMediaItem
 import com.charan.habitdiary.presentation.add_daily_log.DailyLogState
 import com.charan.habitdiary.presentation.add_habit.AddHabitState
-import com.charan.habitdiary.presentation.common.model.DailyLogItemUIState
-import com.charan.habitdiary.presentation.habits.HabitItemUIState
+import com.charan.habitdiary.presentation.common.model.DailyLogItemUIModel
+import com.charan.habitdiary.presentation.habits.HabitItemUIModel
 import com.charan.habitdiary.utils.DateUtil
 import com.charan.habitdiary.utils.DateUtil.toFormattedString
 import kotlinx.datetime.LocalDateTime
 
-fun List<HabitEntity>.toHabitUIList() : List<HabitItemUIState>{
+fun List<HabitEntity>.toHabitUIList() : List<HabitItemUIModel>{
     return this.map {
-        HabitItemUIState(
+        HabitItemUIModel(
             id = it.id,
             habitName = it.habitName,
             habitDescription = it.habitDescription,
@@ -28,8 +28,8 @@ fun List<HabitEntity>.toHabitUIList() : List<HabitItemUIState>{
     }
 }
 
-fun HabitWithDone.toHabitUIState(is24HourFormat: Boolean) : HabitItemUIState {
-    return HabitItemUIState(
+fun HabitWithDone.toHabitUIState(is24HourFormat: Boolean) : HabitItemUIModel {
+    return HabitItemUIModel(
         id = this.habitEntity.id,
         habitName = this.habitEntity.habitName,
         habitDescription = this.habitEntity.habitDescription,
@@ -41,7 +41,7 @@ fun HabitWithDone.toHabitUIState(is24HourFormat: Boolean) : HabitItemUIState {
     )
 }
 
-fun List<HabitWithDone>.toHabitUIState(is24HourFormat: Boolean) : List<HabitItemUIState> {
+fun List<HabitWithDone>.toHabitUIState(is24HourFormat: Boolean) : List<HabitItemUIModel> {
     return this.map {
         it.toHabitUIState(is24HourFormat)
     }
@@ -60,7 +60,7 @@ fun AddHabitState.toHabitEntity(): HabitEntity {
     )
 }
 
-fun HabitItemUIState.toDailyLogEntity(date : LocalDateTime) : DailyLogEntity {
+fun HabitItemUIModel.toDailyLogEntity(date : LocalDateTime) : DailyLogEntity {
     return DailyLogEntity(
         logNote = "",
         imagePath = "",
@@ -98,8 +98,8 @@ fun List<DailyLogMediaItem>.toDailyLogMediaEntityList() : List<DailyLogMediaEnti
 
 
 
-fun DailyLogWithHabit.toDailyLogUIState(is24HourFormat : Boolean) : DailyLogItemUIState {
-    return DailyLogItemUIState(
+fun DailyLogWithHabit.toDailyLogUIState(is24HourFormat : Boolean) : DailyLogItemUIModel {
+    return DailyLogItemUIModel(
         id = this.dailyLogEntity.id,
         logNote = this.dailyLogEntity.logNote,
         mediaPaths = this.mediaEntities.map { it.mediaPath },
@@ -109,7 +109,7 @@ fun DailyLogWithHabit.toDailyLogUIState(is24HourFormat : Boolean) : DailyLogItem
     )
 }
 
-fun List<DailyLogWithHabit>.toDailyLogUIStateList(is24HourFormat: Boolean) : List<DailyLogItemUIState> {
+fun List<DailyLogWithHabit>.toDailyLogUIStateList(is24HourFormat: Boolean) : List<DailyLogItemUIModel> {
     return this.map {
         it.toDailyLogUIState(is24HourFormat)
     }

@@ -66,10 +66,10 @@ fun OnBoardingScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                OnBoardingEffects.NavigateToHome -> {
+                OnBoardingEffect.NavigateToHome -> {
                     onNavigateToHomeScreen()
                 }
-                is OnBoardingEffects.OnScrollToPage -> {
+                is OnBoardingEffect.OnScrollToPage -> {
                     pagerState.animateScrollToPage(effect.page)
                 }
             }
