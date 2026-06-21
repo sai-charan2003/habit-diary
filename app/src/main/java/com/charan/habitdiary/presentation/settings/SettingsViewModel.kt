@@ -13,7 +13,6 @@ import com.charan.habitdiary.presentation.common.model.ToastMessage
 import com.charan.habitdiary.presentation.settings.SettingsEffect.*
 import com.charan.habitdiary.utils.GITHUB_URL
 import com.charan.habitdiary.utils.PLAY_STORE_URL
-import com.charan.habitdiary.utils.ProcessState
 import com.charan.habitdiary.utils.getAppVersionWithVersionCode
 import com.charan.habitdiary.utils.isBiometricAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +21,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -231,70 +229,34 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    private fun backupData(uri : Uri)= viewModelScope.launch(Dispatchers.IO) {
-        backupRepository.backupData(uri).collectLatest { state ->
-            when(state){
-                is ProcessState.Error -> {
-                    _state.update {
-                        it.copy(
-                            isExporting = false
-                        )
-                    }
-                    sendEffect(SettingsEffect.ShowToast(ToastMessage.Text(state.exception)))
-
-                }
-                is ProcessState.Loading -> {
-                    _state.update {
-                        it.copy(
-                            isExporting = true
-                        )
-                    }
-                }
-
-                ProcessState.NotDetermined ->{}
-                is ProcessState.Success<*> -> {
-                    _state.update {
-                        it.copy(
-                            isExporting = false
-                        )
-                    }
-                    sendEffect(SettingsEffect.ShowToast(ToastMessage.Res(R.string.backup_restored)))
-                }
-            }
+    private fun backupData(uri: Uri) = viewModelScope.launch(Dispatchers.IO) {
+        _state.update {
+            it.copy(isExporting = true)
+        }
+        val result = backupRepository.backupData(uri)
+        _state.update {
+            it.copy(isExporting = false)
+        }
+        result.onSuccess {
+            sendEffect(SettingsEffect.ShowToast(ToastMessage.Res(R.string.backup_saved)))
+        }.onFailure { exception ->
+            sendEffect(SettingsEffect.ShowToast(ToastMessage.Text(exception.message ?: "An error occurred")))
         }
     }
 
-    private fun importData(uri : Uri) = viewModelScope.launch(Dispatchers.IO) {
-        backupRepository.importData(uri).collectLatest { state->
-            when(state){
-                is ProcessState.Error -> {
-                    _state.update {
-                        it.copy(
-                            isImporting = false
-                        )
-                    }
-                    sendEffect(SettingsEffect.ShowToast(ToastMessage.Text(state.exception)))
-                }
-                is ProcessState.Loading -> {
-                    _state.update {
-                        it.copy(
-                            isImporting = true
-                        )
-                    }
-                }
-                ProcessState.NotDetermined -> {}
-                is ProcessState.Success<*> -> {
-                    _state.update {
-                        it.copy(
-                            isImporting = false
-                        )
-                    }
-                    sendEffect(SettingsEffect.ShowToast(ToastMessage.Res(R.string.backup_restored)))
-                }
-            }
-
+    private fun importData(uri: Uri) = viewModelScope.launch(Dispatchers.IO) {
+        _state.update {
+            it.copy(isImporting = true)
         }
-
+        val result = backupRepository.importData(uri)
+        _state.update {
+            it.copy(isImporting = false)
+        }
+        result.onSuccess {
+            sendEffect(SettingsEffect.ShowToast(ToastMessage.Res(R.string.backup_restored)))
+        }.onFailure { exception ->
+            sendEffect(SettingsEffect.ShowToast(ToastMessage.Text(exception.message ?: "An error occurred")))
+        }
     }
 
 }

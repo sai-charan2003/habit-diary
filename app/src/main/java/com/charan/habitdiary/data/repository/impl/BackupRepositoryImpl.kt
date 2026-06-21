@@ -14,14 +14,8 @@ import com.charan.habitdiary.data.repository.HabitRepository
 import com.charan.habitdiary.data.repository.impl.FileRepositoryImpl.Companion.HABIT_DIARY_IMAGES
 import com.charan.habitdiary.data.repository.impl.FileRepositoryImpl.Companion.HABIT_DIARY_MEDIA_DIR
 import com.charan.habitdiary.notification.NotificationScheduler
-import com.charan.habitdiary.utils.ProcessState
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.serialization.json.Json
-import okhttp3.Dispatcher
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
@@ -29,7 +23,6 @@ import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
-import kotlin.random.Random
 
 
 class BackupRepositoryImpl(
@@ -51,13 +44,11 @@ class BackupRepositoryImpl(
         const val HABIT_MEDIA_DIR = "habitMedia/"
         const val HABIT_IMAGES_DIR = "habitImages/"
     }
-    override suspend fun backupData(uri: Uri?): Flow<ProcessState<Boolean>> = flow{
-        if(uri == null){
-            emit(ProcessState.Error("No File Found"))
-            return@flow
+    override suspend fun backupData(uri: Uri?): Result<Boolean> {
+        if (uri == null) {
+            return Result.failure(Exception("No File Found"))
         }
-        emit(ProcessState.Loading())
-        try {
+        return try {
             val habits = habitRepository.getAllHabits()
             val dailyLogs = habitRepository.getAllDailyLogs()
             val media = habitRepository.getAllMedia()
@@ -72,11 +63,10 @@ class BackupRepositoryImpl(
             val mediaJson = Json.encodeToString(media)
             val metaJson = Json.encodeToString(metaData)
 
-
-
             val outputStream = context.contentResolver.openOutputStream(uri)
+                ?: throw Exception("Failed to open output stream")
 
-            ZipOutputStream(BufferedOutputStream(outputStream)).use { zip->
+            ZipOutputStream(BufferedOutputStream(outputStream)).use { zip ->
 
                 zip.putNextEntry(ZipEntry(META_FILE))
                 zip.write(metaJson.toByteArray())
@@ -95,10 +85,10 @@ class BackupRepositoryImpl(
                 zip.write(mediaJson.toByteArray())
                 zip.closeEntry()
 
-                val mediaFiles = File(context.filesDir,HABIT_DIARY_MEDIA_DIR)
-                val oldFiles = File(context.filesDir,HABIT_DIARY_IMAGES)
+                val mediaFiles = File(context.filesDir, HABIT_DIARY_MEDIA_DIR)
+                val oldFiles = File(context.filesDir, HABIT_DIARY_IMAGES)
 
-                if(mediaFiles.exists()){
+                if (mediaFiles.exists()) {
                     mediaFiles.listFiles()?.forEach { file ->
                         zip.putNextEntry(ZipEntry("$HABIT_MEDIA_DIR${file.name}"))
                         file.inputStream().use { input ->
@@ -108,7 +98,7 @@ class BackupRepositoryImpl(
                     }
                 }
 
-                if(oldFiles.exists()){
+                if (oldFiles.exists()) {
                     oldFiles.listFiles()?.forEach { file ->
                         zip.putNextEntry(ZipEntry("$HABIT_IMAGES_DIR${file.name}"))
                         file.inputStream().use { input ->
@@ -119,28 +109,25 @@ class BackupRepositoryImpl(
                 }
 
             }
-            emit(ProcessState.Success(true))
-
+            Result.success(true)
         } catch (e: Exception) {
-            emit(ProcessState.Error(e.message ?: "An error occurred"))
+            Result.failure(e)
         }
-
     }
 
-    override suspend fun importData(uri: Uri?): Flow<ProcessState<Boolean>> = flow {
+    override suspend fun importData(uri: Uri?): Result<Boolean> {
         if (uri == null) {
-            emit(ProcessState.Error("No File Found"))
-            return@flow
+            return Result.failure(Exception("No File Found"))
         }
-        emit(ProcessState.Loading())
         var importedHabits: List<HabitEntity> = emptyList()
         var importedDailyLogs: List<DailyLogEntity> = emptyList()
         var importedMediaEntities: List<DailyLogMediaEntity> = emptyList()
 
         val fileNameMapping = mutableMapOf<String, String>()
 
-        try {
+        return try {
             val inputStream = context.contentResolver.openInputStream(uri)
+                ?: throw Exception("Failed to open input stream")
             ZipInputStream(BufferedInputStream(inputStream)).use { zip ->
                 var entry = zip.nextEntry
 
@@ -242,11 +229,10 @@ class BackupRepositoryImpl(
                 habitRepository.upsetDailyLogMediaEntities(finalMediaEntities)
             }
 
-            emit(ProcessState.Success(true))
-
+            Result.success(true)
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(ProcessState.Error(e.message ?: "An error occurred"))
+            Result.failure(e)
         }
     }
 
