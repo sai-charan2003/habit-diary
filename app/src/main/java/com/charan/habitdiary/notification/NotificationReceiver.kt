@@ -54,7 +54,7 @@ class NotificationReceiver : BroadcastReceiver() {
                             val habit = habitRepository.getHabitWithId(habitId).getOrNull() ?: return@launch
                             val habitLog = diaryRepository.getLoggedHabitFromIdForRange(habitId).getOrNull()
                             if(habitLog == null){
-                                diaryRepository.upsetDailyLog(
+                                diaryRepository.upsertDailyLog(
                                     DailyLogEntity(
                                         logNote = "",
                                         imagePath = "",

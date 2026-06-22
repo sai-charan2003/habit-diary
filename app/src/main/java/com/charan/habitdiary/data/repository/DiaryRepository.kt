@@ -11,7 +11,7 @@ import kotlinx.datetime.LocalDateTime
 
 interface DiaryRepository {
 
-    suspend fun upsetDailyLog(
+    suspend fun upsertDailyLog(
         dailyLog: DailyLogEntity,
         mediaEntity: List<DailyLogMediaEntity> = emptyList()
     ): Result<Unit>
@@ -43,7 +43,7 @@ interface DiaryRepository {
         endOfDay: LocalDateTime = DateUtil.todayEndOfDay()
     ): Result<DailyLogEntity?>
 
-    suspend fun upsetDailyLogMediaEntities(mediaEntity: List<DailyLogMediaEntity>): Result<Unit>
+    suspend fun upsertDailyLogMediaEntities(mediaEntity: List<DailyLogMediaEntity>): Result<Unit>
 
     suspend fun getAllMedia(): Result<List<DailyLogMediaEntity>>
 

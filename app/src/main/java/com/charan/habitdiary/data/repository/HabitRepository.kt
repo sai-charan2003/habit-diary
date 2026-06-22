@@ -9,7 +9,7 @@ import kotlinx.datetime.LocalDateTime
 
 interface HabitRepository {
 
-    suspend fun upsetHabit(habit: HabitEntity): Result<Long>
+    suspend fun upsertHabit(habit: HabitEntity): Result<Long>
 
     fun getAllHabitsFlow(): Flow<Result<List<HabitEntity>>>
 

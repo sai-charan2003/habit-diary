@@ -161,7 +161,7 @@ class HabitViewModel @Inject constructor(
 
     private fun onAddHabitClick(habitUI : HabitItemUIModel,isChecked : Boolean) = viewModelScope.launch {
         if (isChecked) {
-            diaryRepository.upsetDailyLog(habitUI.toDailyLogEntity(DateUtil.getCurrentDateTime()))
+            diaryRepository.upsertDailyLog(habitUI.toDailyLogEntity(DateUtil.getCurrentDateTime()))
                 .onFailure { error -> _effect.emit(HabitEffect.ShowToast(ToastMessage.Text(error.message ?: "Error logging habit"))) }
         } else {
             diaryRepository.deleteDailyLog(habitUI.logId ?: return@launch)

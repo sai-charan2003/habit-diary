@@ -1,7 +1,9 @@
 package com.charan.habitdiary.di
 
 import android.content.Context
+import androidx.room.Room
 import com.charan.habitdiary.data.local.AppDatabase
+import com.charan.habitdiary.data.local.MIGRATION_1_2
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +18,13 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
-        return AppDatabase.getDatabase(context)
+        return Room.databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            AppDatabase.DATABASE_NAME
+        )
+            .addMigrations(MIGRATION_1_2)
+            .build()
     }
 
     @Provides

@@ -331,7 +331,7 @@ class DailyLogViewModel @AssistedInject constructor(
         try {
             setLoading(true)
             saveImagesToFileDir()
-            diaryRepository.upsetDailyLog(
+            diaryRepository.upsertDailyLog(
                 dailyLog = _state.value.toDailyLogEntity(),
                 mediaEntity = _state.value.dailyLogItemDetails.mediaItems.toDailyLogMediaEntityList()
             )

@@ -12,7 +12,7 @@ import kotlinx.datetime.DayOfWeek
 interface HabitDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsetHabit(habit: HabitEntity) : Long
+    suspend fun upsertHabit(habit: HabitEntity) : Long
 
     @Insert
     suspend fun insertHabits(habits: List<HabitEntity>) : List<Long>

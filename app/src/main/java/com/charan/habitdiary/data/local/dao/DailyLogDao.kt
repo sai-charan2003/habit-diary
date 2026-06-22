@@ -17,7 +17,7 @@ import kotlinx.datetime.LocalDateTime
 interface DailyLogDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsetDailyLog(dailyLog: DailyLogEntity) : Long
+    suspend fun upsertDailyLog(dailyLog: DailyLogEntity) : Long
 
     @Update
     suspend fun updateDailyLog(dailyLog: DailyLogEntity)

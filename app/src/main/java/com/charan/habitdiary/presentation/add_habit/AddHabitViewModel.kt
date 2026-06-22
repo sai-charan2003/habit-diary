@@ -207,7 +207,7 @@ class AddHabitViewModel @Inject constructor(
 
 
     private fun saveHabit() = viewModelScope.launch {
-        habitRepository.upsetHabit(_state.value.toHabitEntity()).onSuccess { id ->
+        habitRepository.upsertHabit(_state.value.toHabitEntity()).onSuccess { id ->
             notificationScheduler.scheduleReminder(
                 habitId = id,
                 time = _state.value.habitReminderTime ?: LocalTime(8,0),

@@ -101,7 +101,7 @@ class HabitStatsViewModel @AssistedInject constructor(
                 sendEffect(HabitStatsEffect.ShowToast(ToastMessage.Text(error.message ?: "Failed to load habit details")))
             }.getOrNull() ?: return@launch
             val createdTime = date.atTime(DateUtil.getCurrentTime())
-            diaryRepository.upsetDailyLog(
+            diaryRepository.upsertDailyLog(
                 habit.toDailyLogEntity(date = createdTime)
             ).onFailure { error ->
                 sendEffect(HabitStatsEffect.ShowToast(ToastMessage.Text(error.message ?: "Failed to log habit")))

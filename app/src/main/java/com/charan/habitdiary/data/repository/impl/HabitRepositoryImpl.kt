@@ -1,10 +1,9 @@
 package com.charan.habitdiary.data.repository.impl
 
-import com.charan.habitdiary.data.local.dao.DailyLogDao
 import com.charan.habitdiary.data.local.dao.HabitDao
-import com.charan.habitdiary.data.local.entity.DailyLogEntity
 import com.charan.habitdiary.data.local.entity.HabitEntity
 import com.charan.habitdiary.data.local.model.HabitWithDone
+import com.charan.habitdiary.data.repository.DiaryRepository
 import com.charan.habitdiary.data.repository.HabitRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -16,11 +15,11 @@ import javax.inject.Inject
 
 class HabitRepositoryImpl @Inject constructor(
     private val habitDao: HabitDao,
-    private val dailyLogDao: DailyLogDao
+    private val diaryRepository: DiaryRepository
 ) : HabitRepository {
 
-    override suspend fun upsetHabit(habit: HabitEntity): Result<Long> = runCatching {
-        habitDao.upsetHabit(habit)
+    override suspend fun upsertHabit(habit: HabitEntity): Result<Long> = runCatching {
+        habitDao.upsertHabit(habit)
     }
 
     override fun getAllHabitsFlow(): Flow<Result<List<HabitEntity>>> {
@@ -36,7 +35,7 @@ class HabitRepositoryImpl @Inject constructor(
     override fun getActiveHabits(): Flow<Result<List<HabitWithDone>>> {
         return combine(
             habitDao.getActiveHabitsFlow(),
-            getLoggedHabitIdsForRange().map { it.getOrNull() ?: emptyList() }
+            diaryRepository.getLoggedHabitIdsForRange().map { it.getOrNull() ?: emptyList() }
         ) { habits, dailyLogs ->
             val logMap = dailyLogs.associateBy { it.habitId }
             val mapped = habits.map { habit ->
@@ -60,15 +59,6 @@ class HabitRepositoryImpl @Inject constructor(
         habitDao.deleteHabit(id)
     }
 
-    private fun getLoggedHabitIdsForRange(
-        startOfDay: LocalDateTime = com.charan.habitdiary.utils.DateUtil.todayStartOfDay(),
-        endOfDay: LocalDateTime = com.charan.habitdiary.utils.DateUtil.todayEndOfDay()
-    ): Flow<Result<List<DailyLogEntity>>> {
-        return dailyLogDao.getLoggedHabitIdsForToday(startOfDay, endOfDay)
-            .map { Result.success(it) }
-            .catch { emit(Result.failure(it)) }
-    }
-
     override suspend fun insertHabits(habits: List<HabitEntity>): Result<List<Long>> = runCatching {
         habitDao.insertHabits(habits)
     }
@@ -76,7 +66,7 @@ class HabitRepositoryImpl @Inject constructor(
     override fun getTodayHabits(currentDayOfWeek: DayOfWeek): Flow<Result<List<HabitWithDone>>> {
         return combine(
             habitDao.getTodayHabits(currentDayOfWeek),
-            getLoggedHabitIdsForRange().map { it.getOrNull() ?: emptyList() }
+            diaryRepository.getLoggedHabitIdsForRange().map { it.getOrNull() ?: emptyList() }
         ) { habits, dailyLogs ->
             val logMap = dailyLogs.associateBy { it.habitId }
             val mapped = habits.map { habit ->

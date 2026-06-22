@@ -230,7 +230,7 @@ class BackupRepositoryImpl @Inject constructor(
                     )
                 }
 
-                diaryRepository.upsetDailyLogMediaEntities(finalMediaEntities).onFailure { return Result.failure(it) }
+                diaryRepository.upsertDailyLogMediaEntities(finalMediaEntities).onFailure { return Result.failure(it) }
             }
 
             Result.success(true)

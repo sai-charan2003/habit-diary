@@ -19,11 +19,11 @@ class DiaryRepositoryImpl @Inject constructor(
     private val dailyLogMediaDao: DailyLogMediaDao
 ) : DiaryRepository {
 
-    override suspend fun upsetDailyLog(
+    override suspend fun upsertDailyLog(
         dailyLog: DailyLogEntity,
         mediaEntity: List<DailyLogMediaEntity>
     ): Result<Unit> = runCatching {
-        val id = dailyLogDao.upsetDailyLog(dailyLog)
+        val id = dailyLogDao.upsertDailyLog(dailyLog)
         if (mediaEntity.isNotEmpty()) {
             val mappedMedia = mediaEntity.map { it.copy(dailyLogId = id) }
             dailyLogMediaDao.upsertMedia(mappedMedia)
@@ -91,7 +91,7 @@ class DiaryRepositoryImpl @Inject constructor(
         dailyLogDao.getLoggedHabitFromIdForRange(habitId, startOfDay, endOfDay)
     }
 
-    override suspend fun upsetDailyLogMediaEntities(mediaEntity: List<DailyLogMediaEntity>): Result<Unit> = runCatching {
+    override suspend fun upsertDailyLogMediaEntities(mediaEntity: List<DailyLogMediaEntity>): Result<Unit> = runCatching {
         dailyLogMediaDao.upsertMedia(mediaEntity)
     }
 
