@@ -2,7 +2,7 @@ package com.charan.habitdiary.presentation.diary
 
 import com.charan.habitdiary.data.model.enums.DailyLogSortType
 import com.charan.habitdiary.presentation.common.model.DailyLogItemUIModel
-import com.charan.habitdiary.utils.DateUtil
+import com.charan.habitdiary.core.utils.DateUtil
 import com.kizitonwose.calendar.core.minusMonths
 import com.kizitonwose.calendar.core.minusYears
 import com.kizitonwose.calendar.core.now

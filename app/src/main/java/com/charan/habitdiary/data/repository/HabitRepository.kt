@@ -2,7 +2,7 @@ package com.charan.habitdiary.data.repository
 
 import com.charan.habitdiary.data.local.entity.HabitEntity
 import com.charan.habitdiary.data.local.model.HabitWithDone
-import com.charan.habitdiary.utils.DateUtil
+import com.charan.habitdiary.core.utils.DateUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDateTime

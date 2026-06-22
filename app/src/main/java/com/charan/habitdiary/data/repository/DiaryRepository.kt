@@ -4,7 +4,7 @@ import com.charan.habitdiary.data.local.entity.DailyLogEntity
 import com.charan.habitdiary.data.local.entity.DailyLogMediaEntity
 import com.charan.habitdiary.data.local.model.DailyLogWithHabit
 import com.charan.habitdiary.data.model.enums.DailyLogSortType
-import com.charan.habitdiary.utils.DateUtil
+import com.charan.habitdiary.core.utils.DateUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime

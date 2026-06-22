@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.charan.habitdiary.R
 import com.charan.habitdiary.data.repository.DataStoreRepository
 import com.charan.habitdiary.presentation.common.model.ToastMessage
-import com.charan.habitdiary.utils.isBiometricAvailable
-import com.charan.habitdiary.utils.getAppVersion
+import com.charan.habitdiary.core.utils.isBiometricAvailable
+import com.charan.habitdiary.core.utils.getAppVersion
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

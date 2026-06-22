@@ -11,10 +11,10 @@ import com.charan.habitdiary.data.repository.BackupRepository
 import com.charan.habitdiary.data.repository.DataStoreRepository
 import com.charan.habitdiary.presentation.common.model.ToastMessage
 import com.charan.habitdiary.presentation.settings.SettingsEffect.*
-import com.charan.habitdiary.utils.GITHUB_URL
-import com.charan.habitdiary.utils.PLAY_STORE_URL
-import com.charan.habitdiary.utils.getAppVersionWithVersionCode
-import com.charan.habitdiary.utils.isBiometricAvailable
+import com.charan.habitdiary.core.utils.GITHUB_URL
+import com.charan.habitdiary.core.utils.PLAY_STORE_URL
+import com.charan.habitdiary.core.utils.getAppVersionWithVersionCode
+import com.charan.habitdiary.core.utils.isBiometricAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow

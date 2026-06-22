@@ -27,14 +27,15 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.platform.LocalContext
 import com.charan.habitdiary.R
-import com.charan.habitdiary.utils.showToast
+import com.charan.habitdiary.core.utils.showToast
+import com.charan.habitdiary.presentation.common.mapper.toResId
 import com.charan.habitdiary.presentation.common.components.CustomDropDown
 import com.charan.habitdiary.presentation.common.components.CustomMediumTopBar
 import com.charan.habitdiary.presentation.common.components.SectionHeading
 import com.charan.habitdiary.presentation.habits.components.EmptyStateItem
 import com.charan.habitdiary.presentation.habits.components.HabitItemCard
 import com.charan.habitdiary.presentation.habits.components.SortButton
-import com.charan.habitdiary.utils.DateUtil.toLocale
+import com.charan.habitdiary.core.utils.DateUtil.toLocale
 import kotlinx.coroutines.flow.collectLatest
 import java.time.format.TextStyle
 
@@ -109,7 +110,7 @@ fun HabitScreen(
                     onSortSelected = {
                         viewModel.onEvent(HabitEvent.OnSortTypeChange(it))
                     },
-                    selectedSortTypeRes = state.habitSortType.toLocaleString(),
+                    selectedSortTypeRes = state.habitSortType.toResId(),
                     isExpanded = state.isSortDropDownExpanded,
                 )
             }

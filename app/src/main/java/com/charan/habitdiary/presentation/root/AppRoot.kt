@@ -43,8 +43,8 @@ import com.charan.habitdiary.R
 import com.charan.habitdiary.data.model.enums.ThemeOption
 import com.charan.habitdiary.presentation.common.components.ChangeLogBottomSheet
 import com.charan.habitdiary.presentation.root.navigation.RootNavigation
-import com.charan.habitdiary.ui.theme.HabitDiaryTheme
-import com.charan.habitdiary.utils.showToast
+import com.charan.habitdiary.presentation.theme.HabitDiaryTheme
+import com.charan.habitdiary.core.utils.showToast
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable

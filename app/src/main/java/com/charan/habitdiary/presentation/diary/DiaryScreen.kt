@@ -47,17 +47,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.platform.LocalContext
-import com.charan.habitdiary.utils.showToast
+import com.charan.habitdiary.core.utils.showToast
 import androidx.window.core.layout.WindowSizeClass
 import com.charan.habitdiary.R
 import com.charan.habitdiary.data.model.enums.DailyLogSortType
+import com.charan.habitdiary.presentation.common.mapper.toResId
 import com.charan.habitdiary.presentation.common.components.CalendarHeaderItem
 import com.charan.habitdiary.presentation.common.components.CustomMediumTopBar
 import com.charan.habitdiary.presentation.diary.components.CustomWeekCalendar
 import com.charan.habitdiary.presentation.common.components.MonthCalendarView
 import com.charan.habitdiary.presentation.diary.components.LogSortButton
 import com.charan.habitdiary.presentation.root.navigation.LocalTwoPaneVisibility
-import com.charan.habitdiary.utils.DateUtil.toLocale
+import com.charan.habitdiary.core.utils.DateUtil.toLocale
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
@@ -402,7 +403,7 @@ private fun DiaryListContent(
                 horizontalArrangement = Arrangement.End
             ) {
                 LogSortButton(
-                    sortTypeRes = state.sortType.toLocaleString(),
+                    sortTypeRes = state.sortType.toResId(),
                     icon = when (state.sortType) {
                         DailyLogSortType.NEWEST_FIRST -> R.drawable.new_first_sort
                         DailyLogSortType.OLDEST_FIRST -> R.drawable.old_first_sort

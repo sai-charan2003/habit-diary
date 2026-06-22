@@ -52,11 +52,11 @@ import com.charan.habitdiary.presentation.settings.components.SectionHeader
 import com.charan.habitdiary.presentation.settings.components.SettingsRowItem
 import com.charan.habitdiary.presentation.settings.components.SettingsSwitchItem
 import com.charan.habitdiary.presentation.settings.components.ThemeOptionButtonGroup
-import com.charan.habitdiary.ui.theme.IndexItem
-import com.charan.habitdiary.utils.showToast
+import com.charan.habitdiary.presentation.theme.IndexItem
+import com.charan.habitdiary.core.utils.showToast
 import kotlinx.coroutines.flow.collectLatest
-import com.charan.habitdiary.utils.launchFeedbackEmail
-import com.charan.habitdiary.utils.launchUrl
+import com.charan.habitdiary.core.utils.launchFeedbackEmail
+import com.charan.habitdiary.core.utils.launchUrl
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
