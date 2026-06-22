@@ -17,9 +17,11 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class NotificationScheduler(
-    private val context : Context
+class NotificationScheduler @Inject constructor(
+    @ApplicationContext private val context : Context
 ) {
     private val alarmManager =
         context.getSystemService(Context.ALARM_SERVICE) as AlarmManager

@@ -5,11 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class PermissionManager @Inject constructor(
-    private val context : Context
-
+    @ApplicationContext private val context : Context
 ) {
     fun isCameraPermissionGranted() : Boolean {
         return ContextCompat.checkSelfPermission(

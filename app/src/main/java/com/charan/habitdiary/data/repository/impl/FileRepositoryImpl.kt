@@ -17,9 +17,11 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.lang.Exception
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class FileRepositoryImpl(
-    private val context : Context
+class FileRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context : Context
 ) : FileRepository {
 
     companion object {

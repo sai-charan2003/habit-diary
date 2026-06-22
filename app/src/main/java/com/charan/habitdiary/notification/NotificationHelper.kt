@@ -11,8 +11,10 @@ import android.os.Build
 import com.charan.habitdiary.R
 import androidx.core.net.toUri
 import com.charan.habitdiary.DeepLinkHandler
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class NotificationHelper(private val context: Context) {
+class NotificationHelper @Inject constructor(@ApplicationContext private val context: Context) {
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     init {

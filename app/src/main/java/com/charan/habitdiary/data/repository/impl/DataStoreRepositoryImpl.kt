@@ -11,9 +11,11 @@ import com.charan.habitdiary.data.model.enums.ThemeOption
 import com.charan.habitdiary.data.repository.DataStoreRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class DataStoreRepositoryImpl(
-    private val context : Context
+class DataStoreRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context : Context
 ) : DataStoreRepository {
     companion object {
         private val Context.dataStore by preferencesDataStore("app_preferences")

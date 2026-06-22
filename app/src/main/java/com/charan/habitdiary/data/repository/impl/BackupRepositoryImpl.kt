@@ -23,10 +23,12 @@ import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
 
-class BackupRepositoryImpl(
-    private val context : Context,
+class BackupRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context : Context,
     private val habitRepository: HabitRepository,
     private val notificationScheduler: NotificationScheduler
 ) : BackupRepository{

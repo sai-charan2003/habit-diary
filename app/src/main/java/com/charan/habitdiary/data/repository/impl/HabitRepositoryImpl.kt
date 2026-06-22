@@ -16,8 +16,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import javax.inject.Inject
 
-class HabitRepositoryImpl(
+class HabitRepositoryImpl @Inject constructor(
     private val habitDao : HabitDao,
     private val dailyLogDao : DailyLogDao,
     private val dailyLogMediaDao: DailyLogMediaDao
