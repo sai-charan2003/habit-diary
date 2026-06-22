@@ -12,13 +12,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDateTime
 import javax.inject.Inject
+import com.charan.habitdiary.core.utils.suspendRunCatching
 
 class HabitRepositoryImpl @Inject constructor(
     private val habitDao: HabitDao,
     private val diaryRepository: DiaryRepository
 ) : HabitRepository {
 
-    override suspend fun upsertHabit(habit: HabitEntity): Result<Long> = runCatching {
+    override suspend fun upsertHabit(habit: HabitEntity): Result<Long> = suspendRunCatching {
         habitDao.upsertHabit(habit)
     }
 
@@ -28,7 +29,7 @@ class HabitRepositoryImpl @Inject constructor(
             .catch { emit(Result.failure(it)) }
     }
 
-    override suspend fun getAllHabits(): Result<List<HabitEntity>> = runCatching {
+    override suspend fun getAllHabits(): Result<List<HabitEntity>> = suspendRunCatching {
         habitDao.getAllHabits()
     }
 
@@ -51,15 +52,15 @@ class HabitRepositoryImpl @Inject constructor(
         }.catch { emit(Result.failure(it)) }
     }
 
-    override suspend fun getHabitWithId(id: Long): Result<HabitEntity> = runCatching {
+    override suspend fun getHabitWithId(id: Long): Result<HabitEntity> = suspendRunCatching {
         habitDao.getHabitWithId(id)
     }
 
-    override suspend fun deleteHabit(id: Long): Result<Unit> = runCatching {
+    override suspend fun deleteHabit(id: Long): Result<Unit> = suspendRunCatching {
         habitDao.deleteHabit(id)
     }
 
-    override suspend fun insertHabits(habits: List<HabitEntity>): Result<List<Long>> = runCatching {
+    override suspend fun insertHabits(habits: List<HabitEntity>): Result<List<Long>> = suspendRunCatching {
         habitDao.insertHabits(habits)
     }
 

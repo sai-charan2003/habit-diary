@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import javax.inject.Inject
+import com.charan.habitdiary.core.utils.suspendRunCatching
 
 class DiaryRepositoryImpl @Inject constructor(
     private val dailyLogDao: DailyLogDao,
@@ -22,7 +23,7 @@ class DiaryRepositoryImpl @Inject constructor(
     override suspend fun upsertDailyLog(
         dailyLog: DailyLogEntity,
         mediaEntity: List<DailyLogMediaEntity>
-    ): Result<Unit> = runCatching {
+    ): Result<Unit> = suspendRunCatching {
         val id = dailyLogDao.upsertDailyLog(dailyLog)
         if (mediaEntity.isNotEmpty()) {
             val mappedMedia = mediaEntity.map { it.copy(dailyLogId = id) }
@@ -36,7 +37,7 @@ class DiaryRepositoryImpl @Inject constructor(
             .catch { emit(Result.failure(it)) }
     }
 
-    override suspend fun getAllDailyLogs(): Result<List<DailyLogEntity>> = runCatching {
+    override suspend fun getAllDailyLogs(): Result<List<DailyLogEntity>> = suspendRunCatching {
         dailyLogDao.getAllDailyLogs()
     }
 
@@ -62,15 +63,15 @@ class DiaryRepositoryImpl @Inject constructor(
         }.catch { emit(Result.failure(it)) }
     }
 
-    override suspend fun getDailyLogWithId(id: Long): Result<DailyLogEntity> = runCatching {
+    override suspend fun getDailyLogWithId(id: Long): Result<DailyLogEntity> = suspendRunCatching {
         dailyLogDao.getDailyLogWithId(id)
     }
 
-    override suspend fun getDailyLogsWithHabitWithId(id: Long): Result<DailyLogWithHabit> = runCatching {
+    override suspend fun getDailyLogsWithHabitWithId(id: Long): Result<DailyLogWithHabit> = suspendRunCatching {
         dailyLogDao.getDailyLogsWithHabitWithId(id)
     }
 
-    override suspend fun deleteDailyLog(id: Long): Result<Unit> = runCatching {
+    override suspend fun deleteDailyLog(id: Long): Result<Unit> = suspendRunCatching {
         dailyLogDao.deleteDailyLog(id)
     }
 
@@ -87,11 +88,11 @@ class DiaryRepositoryImpl @Inject constructor(
         habitId: Long,
         startOfDay: LocalDateTime,
         endOfDay: LocalDateTime
-    ): Result<DailyLogEntity?> = runCatching {
+    ): Result<DailyLogEntity?> = suspendRunCatching {
         dailyLogDao.getLoggedHabitFromIdForRange(habitId, startOfDay, endOfDay)
     }
 
-    override suspend fun upsertDailyLogMediaEntities(mediaEntity: List<DailyLogMediaEntity>): Result<Unit> = runCatching {
+    override suspend fun upsertDailyLogMediaEntities(mediaEntity: List<DailyLogMediaEntity>): Result<Unit> = suspendRunCatching {
         dailyLogMediaDao.upsertMedia(mediaEntity)
     }
 
@@ -104,11 +105,11 @@ class DiaryRepositoryImpl @Inject constructor(
             .catch { emit(Result.failure(it)) }
     }
 
-    override suspend fun getAllMedia(): Result<List<DailyLogMediaEntity>> = runCatching {
+    override suspend fun getAllMedia(): Result<List<DailyLogMediaEntity>> = suspendRunCatching {
         dailyLogMediaDao.getAllMedia()
     }
 
-    override suspend fun insertDailyLogs(dailyLogs: List<DailyLogEntity>): Result<List<Long>> = runCatching {
+    override suspend fun insertDailyLogs(dailyLogs: List<DailyLogEntity>): Result<List<Long>> = suspendRunCatching {
         dailyLogDao.insertDailyLogs(dailyLogs)
     }
 

@@ -16,6 +16,17 @@ import androidx.core.net.toUri
 import com.charan.habitdiary.BuildConfig
 import com.charan.habitdiary.R
 import java.util.Locale
+import kotlin.coroutines.cancellation.CancellationException
+
+inline fun <T> suspendRunCatching(block: () -> T): Result<T> {
+    return try {
+        Result.success(block())
+    } catch (c: CancellationException) {
+        throw c
+    } catch (e: Throwable) {
+        Result.failure(e)
+    }
+}
 
 fun String.isVideo(): Boolean {
     return endsWith(".mp4", true) ||

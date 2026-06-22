@@ -19,6 +19,7 @@ import java.io.FileOutputStream
 import java.lang.Exception
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import com.charan.habitdiary.core.utils.suspendRunCatching
 
 class FileRepositoryImpl @Inject constructor(
     @ApplicationContext private val context : Context
@@ -33,13 +34,13 @@ class FileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveImagesToCache(imageUri: Uri): Result<String> = withContext(Dispatchers.IO) {
-        runCatching {
+        suspendRunCatching {
             saveMediaInternal(File(context.cacheDir, HABIT_DIARY_MEDIA_DIR), imageUri)
         }
     }
 
     override suspend fun saveMedia(imageUri: Uri): Result<String> = withContext(Dispatchers.IO) {
-        runCatching {
+        suspendRunCatching {
             saveMediaInternal(File(context.filesDir, HABIT_DIARY_MEDIA_DIR), imageUri)
         }
     }
@@ -112,7 +113,7 @@ class FileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveMediaToDownloads(filePath: String): Result<Boolean> = withContext(Dispatchers.IO) {
-        runCatching {
+        suspendRunCatching {
             val sourceFile = File(filePath)
             val resolver = context.contentResolver
             val mimeType = MimeTypeMap.getSingleton()
