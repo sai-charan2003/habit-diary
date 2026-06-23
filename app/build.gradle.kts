@@ -182,6 +182,7 @@ dependencies {
     implementation(libs.androidx.compose.adaptive.navigation)
     implementation(libs.androidx.compose.adaptive.navigation3)
     implementation(libs.richeditor.compose)
+    debugImplementation(libs.leakcanary)
 
 
 }
