@@ -1,7 +1,9 @@
 package com.charan.habitdiary.presentation.addhabit
 
 import android.Manifest
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +24,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.charan.habitdiary.R
 import com.charan.habitdiary.presentation.addhabit.components.FormTextComponent
 import com.charan.habitdiary.presentation.addhabit.components.HabitReminderComponent
+import com.charan.habitdiary.presentation.common.components.toScreenContentPadding
 import com.charan.habitdiary.presentation.addhabit.components.ScheduleHabitComponent
 import com.charan.habitdiary.presentation.common.components.ActionButtonRow
 import com.charan.habitdiary.presentation.common.components.CustomMediumTopBar
@@ -138,6 +141,7 @@ fun AddHabitScreen(
     }
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomMediumTopBar(
                 title = if(state.isEdit) stringResource(R.string.edit_habit)
@@ -164,12 +168,10 @@ fun AddHabitScreen(
 
             )
         }
-    ) { inner ->
+    ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier
-                .padding(inner)
-                .padding(16.dp)
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = innerPadding.toScreenContentPadding()
         ) {
             item {
                 FormTextComponent(

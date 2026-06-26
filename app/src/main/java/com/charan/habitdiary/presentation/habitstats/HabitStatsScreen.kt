@@ -3,6 +3,8 @@ package com.charan.habitdiary.presentation.habitstats
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.recalculateWindowInsets
 import androidx.compose.foundation.layout.size
@@ -43,6 +45,7 @@ import com.charan.habitdiary.R
 import com.charan.habitdiary.core.utils.showToast
 import com.charan.habitdiary.presentation.common.components.BackButton
 import com.charan.habitdiary.presentation.common.components.CustomMediumTopBar
+import com.charan.habitdiary.presentation.common.components.toScreenContentPadding
 import com.charan.habitdiary.presentation.habitstats.components.CalendarCard
 import com.charan.habitdiary.presentation.habitstats.components.SelectedDateContentItem
 import com.charan.habitdiary.presentation.habitstats.components.StreakStatCard
@@ -112,6 +115,7 @@ fun HabitStatsScreen(
     }
 
     BottomSheetScaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         scaffoldState = scaffoldState,
         sheetContainerColor = Color.Transparent,
         sheetShadowElevation = 0.dp,
@@ -167,8 +171,8 @@ fun HabitStatsScreen(
 
     ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier.padding(16.dp).nestedScroll(scrollBehavior.nestedScrollConnection),
-            contentPadding = innerPadding
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = innerPadding.toScreenContentPadding()
         ) {
 
             item {
