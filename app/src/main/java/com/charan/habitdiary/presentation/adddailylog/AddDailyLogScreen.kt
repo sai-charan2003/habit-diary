@@ -4,6 +4,8 @@ import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -42,6 +44,7 @@ import com.charan.habitdiary.presentation.common.components.DeleteWarningDialog
 import com.charan.habitdiary.presentation.common.components.RationaleDialog
 import com.charan.habitdiary.presentation.common.components.SelectDateDialog
 import com.charan.habitdiary.presentation.common.components.SelectTimeDialog
+import com.charan.habitdiary.presentation.common.components.toScreenContentPadding
 import com.charan.habitdiary.core.utils.isVideo
 import com.charan.habitdiary.core.utils.showToast
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -292,13 +295,13 @@ fun AddDailyLogScreen(
                         }
                     )
         },
-        modifier = Modifier.imePadding()
+        modifier = Modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .imePadding()
     ) { innerPadding->
         LazyColumn(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
-            contentPadding = innerPadding,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = innerPadding.toScreenContentPadding()
         ) {
             if(state.dailyLogItemDetails.habitId!=null){
                 item {

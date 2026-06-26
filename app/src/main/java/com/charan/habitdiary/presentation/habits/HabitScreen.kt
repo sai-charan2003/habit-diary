@@ -1,7 +1,9 @@
 package com.charan.habitdiary.presentation.habits
 
 import android.util.Log
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -32,6 +34,7 @@ import com.charan.habitdiary.presentation.common.mapper.toResId
 import com.charan.habitdiary.presentation.common.components.CustomDropDown
 import com.charan.habitdiary.presentation.common.components.CustomMediumTopBar
 import com.charan.habitdiary.presentation.common.components.SectionHeading
+import com.charan.habitdiary.presentation.common.components.toScreenContentPadding
 import com.charan.habitdiary.presentation.habits.components.EmptyStateItem
 import com.charan.habitdiary.presentation.habits.components.HabitItemCard
 import com.charan.habitdiary.presentation.habits.components.SortButton
@@ -75,6 +78,7 @@ fun HabitScreen(
         }
     }
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomMediumTopBar(
                 title = stringResource(R.string.today),
@@ -96,14 +100,12 @@ fun HabitScreen(
         }
     ) { innerPadding->
         LazyColumn(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = innerPadding.toScreenContentPadding()
         ) {
             item {
                 SortButton(
+                    modifier = Modifier,
                     onClick = {
                         viewModel.onEvent(HabitEvent.OnSortDropDownToggle)
                     },

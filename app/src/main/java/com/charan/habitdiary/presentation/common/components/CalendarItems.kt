@@ -115,9 +115,10 @@ fun CalendarDayItem(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CalendarHeaderItem(
-    dayOfWeek : List<DayOfWeek>
+    dayOfWeek : List<DayOfWeek>,
+    modifier: Modifier
 ) {
-    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp)) {
+    Row(modifier = modifier.fillMaxWidth()) {
         for (dayOfWeek in dayOfWeek) {
             Text(
                 modifier = Modifier.weight(1f),

@@ -9,9 +9,16 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -28,6 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffold
 import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaffoldNavigator
@@ -47,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.LayoutDirection
 import com.charan.habitdiary.core.utils.showToast
 import androidx.window.core.layout.WindowSizeClass
 import com.charan.habitdiary.R
@@ -59,6 +68,7 @@ import com.charan.habitdiary.presentation.common.components.MonthCalendarView
 import com.charan.habitdiary.presentation.diary.components.LogSortButton
 import com.charan.habitdiary.presentation.root.navigation.LocalTwoPaneVisibility
 import com.charan.habitdiary.core.utils.DateUtil.toLocale
+import com.charan.habitdiary.presentation.common.components.toScreenContentPadding
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
@@ -80,8 +90,9 @@ fun DiaryScreen(
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val scaffoldNavigator = rememberSupportingPaneScaffoldNavigator()
-    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val windowSizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
     val isDetailPaneVisible = LocalTwoPaneVisibility.current
+    val layoutDirection = LocalLayoutDirection.current
     val showSidePane = windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
             && !isDetailPaneVisible
     val swipeThresholdPx = with(LocalDensity.current) { 48.dp.toPx() }
@@ -179,6 +190,7 @@ fun DiaryScreen(
         }
     }
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomMediumTopBar(
                 title = currentMonthTitle,
@@ -218,14 +230,13 @@ fun DiaryScreen(
         }
     ) { innerPadding ->
         SupportingPaneScaffold(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier.fillMaxSize().padding(top = innerPadding.calculateTopPadding()),
             directive = scaffoldNavigator.scaffoldDirective,
             value = scaffoldNavigator.scaffoldValue,
             mainPane = {
                 AnimatedPane {
                     Column(
                         modifier = Modifier
-
                     ) {
 
                         Column(
@@ -262,7 +273,13 @@ fun DiaryScreen(
                                 )
                             }
                         ) {
-                            CalendarHeaderItem(daysOfWeek())
+                            CalendarHeaderItem(
+                                daysOfWeek(),
+                                modifier = Modifier.padding(
+                                    start = innerPadding.calculateStartPadding(layoutDirection),
+                                    end = innerPadding.calculateEndPadding(layoutDirection)
+                                )
+                            )
                             AnimatedVisibility(
                                 visible = state.selectedCalendarView == CalendarViewType.WEEK,
                                 enter = fadeIn() + expandVertically(),
@@ -277,7 +294,13 @@ fun DiaryScreen(
                                     selectedDate = state.selectedDate,
                                     visibleMonth = weekCalendarState.lastVisibleWeek.days.last().date.month,
                                     datesWithLogs = state.datesWithLogs,
-                                    showWeekHeader = false
+                                    showWeekHeader = false,
+                                    contentPadding = PaddingValues(
+                                        start = innerPadding.calculateStartPadding(
+                                            layoutDirection
+                                        ),
+                                        end = innerPadding.calculateEndPadding(layoutDirection)
+                                    )
                                 )
                             }
                             AnimatedVisibility(
@@ -294,7 +317,13 @@ fun DiaryScreen(
                                     },
                                     visibleMonth = monthCalendarState.lastVisibleMonth.yearMonth.month,
                                     datesWithLogs = state.datesWithLogs,
-                                    showWeekHeader = false
+                                    showWeekHeader = false,
+                                    contentPadding = PaddingValues(
+                                        start = innerPadding.calculateStartPadding(
+                                            layoutDirection
+                                        ),
+                                        end = innerPadding.calculateEndPadding(layoutDirection)
+                                    )
                                 )
                             }
                         }
@@ -311,9 +340,12 @@ fun DiaryScreen(
                                     )
                                 },
                                 onImageClick = onImageOpen,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+                                modifier = Modifier.fillMaxWidth().weight(1f),
+                                contentPadding = PaddingValues(
+                                    start = innerPadding.calculateStartPadding(layoutDirection) + 16.dp,
+                                    end = innerPadding.calculateEndPadding(layoutDirection) + 16.dp,
+                                    bottom = innerPadding.calculateBottomPadding()
+                                )
                             )
 
                         }
@@ -339,9 +371,12 @@ fun DiaryScreen(
                                  )
                              },
                             onImageClick = onImageOpen,
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(
+                                start = innerPadding.calculateStartPadding(layoutDirection) + 16.dp,
+                                end = innerPadding.calculateEndPadding(layoutDirection) + 16.dp,
+                                bottom = innerPadding.calculateBottomPadding()
+                            )
                         )
                     }
 
@@ -399,14 +434,14 @@ private fun ResetCalendarButton(
 private fun DiaryListContent(
     modifier: Modifier,
     state: DiaryState,
-
     onSortToggle: () -> Unit,
     onItemClick: (Long) -> Unit,
-    onImageClick: (List<String>, String) -> Unit
+    onImageClick: (List<String>, String) -> Unit,
+    contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     LazyColumn(
-        modifier = Modifier
-            .then(modifier)
+        modifier = modifier,
+        contentPadding = contentPadding
     ) {
 
         item {
