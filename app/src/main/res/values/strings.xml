@@ -176,4 +176,9 @@
     <string name="feedback_app_version">App Version: %1$s (%2$s)</string>
     <string name="feedback_android_version">Android Version: %1$s (SDK %2$d)</string>
     <string name="feedback_device">Device: %1$s %2$s</string>
+    <string name="daily_log_reminder">Diary Entry Reminder</string>
+    <string name="daily_log_reminder_time">Reminder Time</string>
+    <string name="notification_daily_log_channel_description">Diary Entry Reminder notifications</string>
+    <string name="notification_daily_log_reminder_title">Diary Entry Reminder</string>
+    <string name="notification_daily_log_reminder_message">Don\'t forget to write your diary entry today!</string>
 </resources>

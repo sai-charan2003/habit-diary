@@ -24,12 +24,21 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.charan.habitdiary.core.notification.NotificationScheduler
+import com.charan.habitdiary.core.utils.DateUtil.toFormattedString
+import com.charan.habitdiary.core.utils.PermissionManager
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.datetime.LocalTime
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val dataStore : DataStoreRepository,
     private val backupRepository: BackupRepository,
-    private val biometricManager : BiometricManager
+    private val biometricManager : BiometricManager,
+    private val notificationScheduler: NotificationScheduler,
+    private val permissionManager: PermissionManager
 ) : ViewModel() {
     private val _state = MutableStateFlow(SettingsState())
     val state = _state.asStateFlow()
@@ -105,6 +114,22 @@ class SettingsViewModel @Inject constructor(
             SettingsEvent.OnToggleChangeLogClick -> {
                 handleChangeLogClick()
             }
+
+            is SettingsEvent.OnDailyLogReminderToggle -> {
+                handleDailyLogReminderToggle(event.isEnabled)
+            }
+            is SettingsEvent.OnDailyLogReminderTimeChange -> {
+                handleDailyLogReminderTimeChange(event.time)
+            }
+            is SettingsEvent.OnToggleDailyLogTimeDialog -> {
+                _state.update { it.copy(showDailyLogTimeDialog = event.show) }
+            }
+            is SettingsEvent.TogglePermissionRationale -> {
+                _state.update { it.copy(showPermissionRationale = event.show) }
+            }
+            SettingsEvent.OpenPermissionSettings -> {
+                permissionManager.openSettingsPermissionScreen()
+            }
         }
     }
 
@@ -126,21 +151,59 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun observeSettingsDataStore() = viewModelScope.launch {
-        combine(
-            dataStore.getSystemFontState,
-            dataStore.getIs24HourFormat,
-            dataStore.getTheme,
-            dataStore.getDynamicColorsState,
-            dataStore.getBiometricLockEnabled
-        ) { font, time, theme, dynamic, biometric ->
-            _state.update { it.copy(
-                isSystemFontEnabled = font,
-                is24HourFormat = time,
-                selectedThemeOption = theme,
-                isDynamicColorsEnabled = dynamic,
-                isBiometricLockEnabled = biometric
-            )}
-        }.collect {}
+        launch {
+            combine(
+                dataStore.getSystemFontState,
+                dataStore.getIs24HourFormat,
+                dataStore.getTheme,
+                dataStore.getDynamicColorsState,
+                dataStore.getBiometricLockEnabled
+            ) { font, time, theme, dynamic, biometric ->
+                _state.update { it.copy(
+                    isSystemFontEnabled = font,
+                    is24HourFormat = time,
+                    selectedThemeOption = theme,
+                    isDynamicColorsEnabled = dynamic,
+                    isBiometricLockEnabled = biometric
+                )}
+            }.collect {}
+        }
+        launch {
+            combine(
+                dataStore.getDailyLogReminderEnabled,
+                dataStore.getDailyLogReminderTime,
+                dataStore.getIs24HourFormat
+            ) { enabled, time, is24Hour ->
+                _state.update { it.copy(
+                    isDailyLogReminderEnabled = enabled,
+                    dailyLogReminderTime = time,
+                    formatedReminderTime = time.toFormattedString(is24Hour)
+                )}
+            }.collect {}
+        }
+    }
+
+    private fun handleDailyLogReminderToggle(isEnabled: Boolean) = viewModelScope.launch {
+        if (isEnabled) {
+            if (permissionManager.isNotificationPermissionGranted()) {
+                dataStore.setDailyLogReminderEnabled(true)
+                val time = dataStore.getDailyLogReminderTime.first()
+                notificationScheduler.scheduleDailyLogReminder(time, true)
+            } else {
+                sendEffect(SettingsEffect.RequestNotificationPermission)
+            }
+        } else {
+            dataStore.setDailyLogReminderEnabled(false)
+            notificationScheduler.cancelDailyLogReminder()
+        }
+    }
+
+    private fun handleDailyLogReminderTimeChange(time: LocalTime) = viewModelScope.launch {
+        dataStore.setDailyLogReminderTime(time)
+        val isReminderEnabled = _state.value.isDailyLogReminderEnabled
+        if (isReminderEnabled) {
+            notificationScheduler.scheduleDailyLogReminder(time, true)
+        }
     }
 
 
